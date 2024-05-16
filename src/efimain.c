@@ -18,6 +18,7 @@
 #include <Library/PrintLib.h>
 #include <Library/UefiLib.h>
 #include <Protocol/BlockIo.h>
+#include <Library/UefiApplicationEntryPoint.h>
 #include <intrin.h>
 #include "efimain.h"
 
