@@ -20,7 +20,7 @@
   #PrintLib
 
   BaseLib
-  BaseDebugPrintErrorLevelLib
+  DebugPrintErrorLevelLib
   BaseMemoryLib
   BasePrintLib
   UefiLib
