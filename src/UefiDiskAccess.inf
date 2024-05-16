@@ -14,9 +14,6 @@
   MdeModulePkg/MdeModulePkg.dec
 
 [LibraryClasses]
-  #UefiBootServicesTableLib
-  #UefiRuntimeServicesTableLib
-
   BaseLib
   DebugPrintErrorLevelLib
   BaseMemoryLib
@@ -26,7 +23,7 @@
   MemoryAllocationLib
   DevicePathLib
   UefiBootServicesTableLib
-  RuntimeServicesTableLib
+  UEFIRuntimeServicesTableLib
 
 [Protocols]
   gEfiBlockIoProtocolGuid
