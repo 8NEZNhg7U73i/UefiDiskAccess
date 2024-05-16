@@ -4,7 +4,7 @@
   FILE_GUID                      = 0826fb48-c848-4916-8afe-c28bc23a06d4
   MODULE_TYPE                    = UEFI_APPLICATION
   VERSION_STRING                 = 20240516
-  ENTRY_POINT                    = EfiMain
+  ENTRY_POINT                    = UefiDiskAccessMain
 
 [Sources]
   efimain.c
