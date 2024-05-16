@@ -14,11 +14,10 @@
   MdeModulePkg/MdeModulePkg.dec
 
 [LibraryClasses]
-  UefiBootServicesTableLib
-  UefiRuntimeServicesTableLib
-  UefiDriverEntryPoint
-  DebugLib
-  PrintLib
+  #UefiBootServicesTableLib
+  #UefiRuntimeServicesTableLib
+  #DebugLib
+  #PrintLib
 
   BaseLib
   BaseDebugPrintErrorLevelLib
