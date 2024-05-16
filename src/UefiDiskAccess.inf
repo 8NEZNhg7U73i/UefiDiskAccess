@@ -17,12 +17,11 @@
   #UefiBootServicesTableLib
   #UefiRuntimeServicesTableLib
   #DebugLib
-  #PrintLib
 
   BaseLib
   DebugPrintErrorLevelLib
   BaseMemoryLib
-  BasePrintLib
+  PrintLib
   UefiLib
   UefiDebugLibConOut
   UefiMemoryAllocationLib
