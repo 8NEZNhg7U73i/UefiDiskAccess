@@ -20,7 +20,7 @@
 #include <Protocol/BlockIo.h>
 #include <Library/UefiApplicationEntryPoint.h>
 #include <intrin.h>
-#include "UefiShellAccess.h"
+#include "UefiDiskAccess.h"
 
 CHAR16 BlockUntilKeyStroke(IN CHAR16 Unicode)
 {
