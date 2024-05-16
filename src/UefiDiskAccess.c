@@ -20,7 +20,7 @@
 #include <Protocol/BlockIo.h>
 #include <Library/UefiApplicationEntryPoint.h>
 #include <intrin.h>
-#include "efimain.h"
+#include "UefiShellAccess.h"
 
 CHAR16 BlockUntilKeyStroke(IN CHAR16 Unicode)
 {
@@ -234,7 +234,7 @@ EFI_STATUS EFIAPI EfiInitialize(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TABLE *S
 	return gBS->HandleProtocol(ImageHandle,&gEfiLoadedImageProtocolGuid,&CurrentImage);
 }
 
-EFI_STATUS EFIAPI EfiMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TABLE *SystemTable)
+EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TABLE *SystemTable)
 {
 	EFI_STATUS st=EfiInitialize(ImageHandle,SystemTable);
 	if(st==EFI_SUCCESS)
