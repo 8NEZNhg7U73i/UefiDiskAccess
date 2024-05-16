@@ -7,7 +7,7 @@
   ENTRY_POINT                    = UefiDiskAccessMain
 
 [Sources]
-  efimain.c
+  UefiDiskAccess.c
 
 [Packages]
   MdePkg/MdePkg.dec
