@@ -16,14 +16,13 @@
 [LibraryClasses]
   #UefiBootServicesTableLib
   #UefiRuntimeServicesTableLib
-  #DebugLib
 
   BaseLib
   DebugPrintErrorLevelLib
   BaseMemoryLib
   PrintLib
   UefiLib
-  UefiDebugLibConOut
+  DebugLib
   UefiMemoryAllocationLib
   UefiDevicePathLib
   UefiBootServicesTableLib
