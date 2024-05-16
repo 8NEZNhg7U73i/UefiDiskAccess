@@ -23,7 +23,7 @@
   MemoryAllocationLib
   DevicePathLib
   UefiBootServicesTableLib
-  UEFIRuntimeServicesTableLib
+  UefiRuntimeServicesTableLib
 
 [Protocols]
   gEfiBlockIoProtocolGuid
