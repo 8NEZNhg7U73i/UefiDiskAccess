@@ -1,0 +1,39 @@
+[Defines]
+  INF_VERSION                    = 0x00010005
+  BASE_NAME                      = UefiDiskAccess
+  FILE_GUID                      = 0826fb48-c848-4916-8afe-c28bc23a06d4
+  MODULE_TYPE                    = application
+  VERSION_STRING                 = 20240516
+  ENTRY_POINT                    = EfiMain
+
+[Sources.common]
+  efimain.c
+
+[Packages]
+  MdePkg/MdePkg.dec
+  MdeModulePkg/MdeModulePkg.dec
+
+[LibraryClasses]
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+  UefiDriverEntryPoint
+  DebugLib
+  PrintLib
+
+  BaseLib
+  BaseDebugPrintErrorLevelLib
+  BaseMemoryLib
+  BasePrintLib
+  UefiLib
+  UefiDebugLibConOut
+  UefiMemoryAllocationLib
+  UefiDevicePathLib
+  UefiBootServicesTableLib
+  UefiRuntimeServicesTableLib
+
+[Protocols]
+  gEfiBlockIoProtocolGuid
+
+[BuildOptions]
+  MSFT:*_*_*_CC_FLAGS            = /wd4244 /wd4267 /wd4334 /wd4245
+  *_*_*_CC_FLAGS                 = -D LODEPNG_UEFI_MODE
