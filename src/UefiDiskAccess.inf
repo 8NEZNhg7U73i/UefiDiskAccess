@@ -23,10 +23,10 @@
   PrintLib
   UefiLib
   DebugLib
-  UefiMemoryAllocationLib
-  UefiDevicePathLib
-  UefiBootServicesTableLib
-  UefiRuntimeServicesTableLib
+  MemoryAllocationLib
+  DevicePathLib
+  BootServicesTableLib
+  RuntimeServicesTableLib
 
 [Protocols]
   gEfiBlockIoProtocolGuid
