@@ -21,6 +21,8 @@
 #include <Library/UefiApplicationEntryPoint.h>
 #include <intrin.h>
 #include "UefiDiskAccess.h"
+#include <Library/ShellLib.h>
+#include <Guid/GlobalVariable.h>
 
 CHAR16 BlockUntilKeyStroke(IN CHAR16 Unicode)
 {
