@@ -67,12 +67,6 @@ void EnablePageBreak()
 				&gEfiShellProtocolGuid,
 				NULL,
 				(VOID **)&ShellProtocol);
-
-		if (EFI_ERROR(STATUS))
-		{
-				Print(L"Can't open EFI_SHELL_PROTOCOL: %r\n", STATUS);
-		}
-
 		ShellProtocol->EnablePageBreak();
 }
 
@@ -130,7 +124,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 					CHAR16 ScaledStart[32],ScaledSize[32];
 					DisplaySize(__emulu(StartLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
 					DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
-					Print(L"MBR-Defined Partition %d: OS Type: 0x%02X  Start Position: %s  Partition Size: %s\n",i,Partition->OSIndicator,ScaledStart,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize);
+					Print(L"MBR Partition %d: OS Type: 0x%02X  Start Position: %s  Partition Size: %s\n",i,Partition->OSIndicator,ScaledStart,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize);
 					if(Partition->OSIndicator==PMBR_GPT_PARTITION || Partition->OSIndicator==EFI_PARTITION)
 					{
 						EFI_PARTITION_TABLE_HEADER *GptHeader=AllocatePool(BlockIoProtocol->Media->BlockSize);
@@ -158,7 +152,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 												{
 													DisplaySize(MultU64x32(PartitionEntry->StartingLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
-													Print(L"GPT-Defined Partition %u: Start Position: %s Partition Size: %s\n",j,ScaledStart,ScaledSize);
+													Print(L"GPT Partition %u: Start Position: %s Partition Size: %s\n",j,ScaledStart,ScaledSize);
 													Print(L"Partition Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
 													Print(L"Unique Partition GUID:  {%g}\n",&PartitionEntry->UniquePartitionGUID);
 												}
@@ -193,7 +187,7 @@ void EnumAllDiskPartitions()
 				Print(L"=============================================================================\r\n");
 				Print(L"Partition Info of Device Path: %s\n",DiskDevicePath);
 				FreePool(DiskDevicePath);
-				Print(L"Block Size: %d bytes. I/O Alignment: 0x%X. Last LBA: 0x%llX.\n",DiskDevices[i].BlockIo->Media->BlockSize,DiskDevices[i].BlockIo->Media->IoAlign,DiskDevices[i].BlockIo->Media->LastBlock);
+				Print(L"Block Size: %d bytes. Last LBA: 0x%llX.\n",DiskDevices[i].BlockIo->Media->BlockSize,DiskDevices[i].BlockIo->Media->LastBlock);
 				EnumDiskPartitions(DiskDevices[i].BlockIo);
 			}
 		}
