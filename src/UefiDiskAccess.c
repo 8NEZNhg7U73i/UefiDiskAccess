@@ -241,7 +241,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TAB
 	{
 		UINT16 RevHi=(UINT16)(SystemTable->Hdr.Revision>>16);
 		UINT16 RevLo=(UINT16)(SystemTable->Hdr.Revision&0xFFFF);
-		SetConsoleModeToMaximumRows();
+		//SetConsoleModeToMaximumRows();
 		StdOut->OutputString(StdOut,L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
 		StdOut->OutputString(StdOut,L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
 		Print(L"UEFI Firmware Vendor: %s Revision: %d.%d\n",SystemTable->FirmwareVendor,RevHi,RevLo);
