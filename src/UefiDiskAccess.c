@@ -60,7 +60,7 @@ INTN EfiCompareGuid(EFI_GUID *Guid1,EFI_GUID *Guid2)
     return 0;
 }
 
-EnablePageBreak()
+void EnablePageBreak()
 {
 		EFI_SHELL_PROTOCOL *ShellProtocol;
 		EFI_STATUS STATUS = gBS->LocateProtocol(
@@ -71,10 +71,7 @@ EnablePageBreak()
 		if (EFI_ERROR(STATUS))
 		{
 				Print(L"Can't open EFI_SHELL_PROTOCOL: %r\n", STATUS);
-				return EFI_SUCCESS;
 		}
-
-		Print(L"PageBreak %s\n", (ShellProtocol->GetPageBreak()) ? L"enabled" : L"disabled");
 
 		ShellProtocol->EnablePageBreak();
 }
