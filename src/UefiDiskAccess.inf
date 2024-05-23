@@ -27,7 +27,7 @@
   UefiBootServicesTableLib
   UefiRuntimeServicesTableLib
   ShellLib
-  CommonLib
+  
 
 [BuildOptions.IA32]
 RELEASE_VS2010x86_IA32_CC_FLAGS  = /FAcs /D_UEFI
