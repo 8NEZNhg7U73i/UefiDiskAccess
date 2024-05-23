@@ -64,8 +64,8 @@ void SetConsoleModeToMaximumRows()
 	for(UINTN i=0;i<StdOut->Mode->MaxMode;i++)
 	{
 		UINTN Col,Row;
-		EFI_STATUS st=StdOut->QueryMode(StdOut,i,&Col,&Row);
-		if(st==EFI_SUCCESS)
+		EFI_STATUS STATUS=StdOut->QueryMode(StdOut,i,&Col,&Row);
+		if(STATUS==EFI_SUCCESS)
 		{
 			if(Row>MaxHgt)
 			{
@@ -93,12 +93,12 @@ void DisplaySize(IN UINT64 Size,OUT CHAR16 *Buffer,IN UINTN Limit)
 
 EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 {
-	EFI_STATUS st=EFI_DEVICE_ERROR;
+	EFI_STATUS STATUS=EFI_DEVICE_ERROR;
 	if(!BlockIoProtocol->Media->LogicalPartition)
 	{
 		MASTER_BOOT_RECORD MBRContent;
-		st=BlockIoProtocol->ReadBlocks(BlockIoProtocol,BlockIoProtocol->Media->MediaId,0,sizeof(MASTER_BOOT_RECORD),&MBRContent);
-		if(st==EFI_SUCCESS)
+		STATUS=BlockIoProtocol->ReadBlocks(BlockIoProtocol,BlockIoProtocol->Media->MediaId,0,sizeof(MASTER_BOOT_RECORD),&MBRContent);
+		if(STATUS==EFI_SUCCESS)
 		{
 			if(MBRContent.Signature!=MBR_SIGNATURE)
 				StdOut->OutputString(StdOut,L"Invalid MBR Signature! MBR might be corrupted!\r\n");
@@ -118,8 +118,8 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 						EFI_PARTITION_TABLE_HEADER *GptHeader=AllocatePool(BlockIoProtocol->Media->BlockSize);
 						if(GptHeader)
 						{
-							st=BlockIoProtocol->ReadBlocks(BlockIoProtocol,BlockIoProtocol->Media->MediaId,StartLBA,BlockIoProtocol->Media->BlockSize,GptHeader);
-							if(st==EFI_SUCCESS)
+							STATUS=BlockIoProtocol->ReadBlocks(BlockIoProtocol,BlockIoProtocol->Media->MediaId,StartLBA,BlockIoProtocol->Media->BlockSize,GptHeader);
+							if(STATUS==EFI_SUCCESS)
 							{
 								if(GptHeader->Header.Signature!=EFI_PTAB_HEADER_ID)
 									StdOut->OutputString(StdOut,L"Improper GPT Header Signature!");
@@ -130,8 +130,8 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 									Print(L"Disk GUID: {%g}  Partition Array LBA: %u  Number of Partitions: %u\n",&GptHeader->DiskGUID,GptHeader->PartitionEntryLBA,GptHeader->NumberOfPartitionEntries);
 									if(PartitionEntries)
 									{
-										st=BlockIoProtocol->ReadBlocks(BlockIoProtocol,BlockIoProtocol->Media->MediaId,GptHeader->PartitionEntryLBA,PartitionEntrySize,PartitionEntries);
-										if(st==EFI_SUCCESS)
+										STATUS=BlockIoProtocol->ReadBlocks(BlockIoProtocol,BlockIoProtocol->Media->MediaId,GptHeader->PartitionEntryLBA,PartitionEntrySize,PartitionEntries);
+										if(STATUS==EFI_SUCCESS)
 										{
 											for(UINT32 j=0;j<GptHeader->NumberOfPartitionEntries;j++)
 											{
@@ -151,7 +151,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 								}
 							}
 							else
-								Print(L"Failed to read GPT Header! Status=0x%p\n",st);
+								Print(L"Failed to read GPT Header! Status=0x%p\n",STATUS);
 							FreePool(GptHeader);
 						}
 					}
@@ -159,7 +159,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 			}
 		}
 	}
-	return st;
+	return STATUS;
 }
 
 void EnumAllDiskPartitions()
@@ -188,8 +188,8 @@ EFI_STATUS InitializeDiskIoProtocol()
 	UINTN BuffCount=0;
 	EFI_HANDLE *HandleBuffer=NULL;
 	// Locate all devices that support Disk I/O Protocol.
-	EFI_STATUS st=gBS->LocateHandleBuffer(ByProtocol,&gEfiBlockIoProtocolGuid,NULL,&BuffCount,&HandleBuffer);
-	if(st==EFI_SUCCESS)
+	EFI_STATUS STATUS=gBS->LocateHandleBuffer(ByProtocol,&gEfiBlockIoProtocolGuid,NULL,&BuffCount,&HandleBuffer);
+	if(STATUS==EFI_SUCCESS)
 	{
 		DiskDevices=AllocateZeroPool(sizeof(DISK_DEVICE_OBJECT)*BuffCount);
 		if(DiskDevices)
@@ -213,14 +213,14 @@ EFI_STATUS InitializeDiskIoProtocol()
 		}
 		else
 		{
-			st=EFI_OUT_OF_RESOURCES;
+			STATUS=EFI_OUT_OF_RESOURCES;
 			StdOut->OutputString(StdOut,L"Failed to build list of Disk Devices!\r\n");
 		}
 		FreePool(HandleBuffer);
 	}
 	else
-		Print(L"Failed to locate Disk I/O handles! Status=0x%p\n",st);
-	return st;
+		Print(L"Failed to locate Disk I/O handles! Status=0x%p\n",STATUS);
+	return STATUS;
 }
 
 EFI_STATUS EFIAPI EfiInitialize(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TABLE *SystemTable)
@@ -236,8 +236,8 @@ EFI_STATUS EFIAPI EfiInitialize(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TABLE *S
 
 EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TABLE *SystemTable)
 {
-	EFI_STATUS st=EfiInitialize(ImageHandle,SystemTable);
-	if(st==EFI_SUCCESS)
+	EFI_STATUS STATUS=EfiInitialize(ImageHandle,SystemTable);
+	if(STATUS==EFI_SUCCESS)
 	{
 		UINT16 RevHi=(UINT16)(SystemTable->Hdr.Revision>>16);
 		UINT16 RevLo=(UINT16)(SystemTable->Hdr.Revision&0xFFFF);
@@ -245,8 +245,8 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TAB
 		StdOut->OutputString(StdOut,L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
 		StdOut->OutputString(StdOut,L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
 		Print(L"UEFI Firmware Vendor: %s Revision: %d.%d\n",SystemTable->FirmwareVendor,RevHi,RevLo);
-		st=InitializeDiskIoProtocol();
-		if(st==EFI_SUCCESS)
+		STATUS=InitializeDiskIoProtocol();
+		if(STATUS==EFI_SUCCESS)
 		{
 			EnumAllDiskPartitions();
 			FreePool(DiskDevices);
@@ -254,5 +254,5 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TAB
 		StdOut->OutputString(StdOut,L"Press Enter key to continue...\r\n");
 		BlockUntilKeyStroke(L'\r');
 	}
-	return st;
+	return STATUS;
 }
