@@ -60,7 +60,7 @@ INTN EfiCompareGuid(EFI_GUID *Guid1,EFI_GUID *Guid2)
     return 0;
 }
 
-void t()
+INTN EnablePageBreak()
 {
 		EFI_SHELL_PROTOCOL *ShellProtocol;
 		EFI_STATUS STATUS = gBS->LocateProtocol(
@@ -263,6 +263,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TAB
 		UINT16 RevHi=(UINT16)(SystemTable->Hdr.Revision>>16);
 		UINT16 RevLo=(UINT16)(SystemTable->Hdr.Revision&0xFFFF);
 		//SetConsoleModeToMaximumRows();
+		EnablePageBreak();
 		Print(L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
 		Print(L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
 		Print(L"UEFI Firmware Vendor: %s Revision: %d.%d\n",SystemTable->FirmwareVendor,RevHi,RevLo);
