@@ -60,6 +60,25 @@ INTN EfiCompareGuid(EFI_GUID *Guid1,EFI_GUID *Guid2)
     return 0;
 }
 
+void t()
+{
+		EFI_SHELL_PROTOCOL *ShellProtocol;
+		Status = gBS->LocateProtocol(
+				&gEfiShellProtocolGuid,
+				NULL,
+				(VOID **)&ShellProtocol);
+
+		if (EFI_ERROR(Status))
+		{
+				Print(L"Can't open EFI_SHELL_PROTOCOL: %r\n", Status);
+				return EFI_SUCCESS;
+		}
+
+		Print(L"PageBreak %s\n", (ShellProtocol->GetPageBreak()) ? L"enabled" : L"disabled");
+
+		ShellProtocol->EnablePageBreak();
+}
+
 void SetConsoleModeToMaximumRows()
 {
 	UINTN MaxHgt=0,OptIndex;
