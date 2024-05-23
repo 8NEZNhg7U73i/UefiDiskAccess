@@ -21,6 +21,7 @@
 #include <Protocol/LoadedImage.h>
 #include <Protocol/UgaDraw.h>
 #include <Protocol/SimpleFileSystem.h>
+#include <Protocol/ShellParameters.h>
 
 #define LimitKiB	(1<<10)
 #define LimitMiB	(1<<20)
