@@ -103,7 +103,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 		if(STATUS==EFI_SUCCESS)
 		{
 			if(MBRContent.Signature!=MBR_SIGNATURE)
-				StdOut->OutputString(StdOut,L"Invalid MBR Signature! MBR might be corrupted!\r\n");
+				Print(L"Invalid MBR Signature! MBR might be corrupted!\r\n");
 			for(UINT8 i=0;i<MAX_MBR_PARTITIONS;i++)
 			{
 				MBR_PARTITION_RECORD *Partition=&MBRContent.Partition[i];
@@ -124,7 +124,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 							if(STATUS==EFI_SUCCESS)
 							{
 								if(GptHeader->Header.Signature!=EFI_PTAB_HEADER_ID)
-									StdOut->OutputString(StdOut,L"Improper GPT Header Signature!");
+									Print(L"Improper GPT Header Signature!");
 								else
 								{
 									UINT32 PartitionEntrySize=GptHeader->SizeOfPartitionEntry*GptHeader->NumberOfPartitionEntries;
@@ -174,7 +174,7 @@ void EnumAllDiskPartitions()
 			CHAR16 *DiskDevicePath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
 			if(DiskDevicePath)
 			{
-				StdOut->OutputString(StdOut,L"=============================================================================\r\n");
+				Print(L"=============================================================================\r\n");
 				Print(L"Partition Info of Device Path: %s\n",DiskDevicePath);
 				FreePool(DiskDevicePath);
 				Print(L"Block Size: %d bytes. I/O Alignment: 0x%X. Last LBA: 0x%llX.\n",DiskDevices[i].BlockIo->Media->BlockSize,DiskDevices[i].BlockIo->Media->IoAlign,DiskDevices[i].BlockIo->Media->LastBlock);
@@ -182,7 +182,7 @@ void EnumAllDiskPartitions()
 			}
 		}
 	}
-	StdOut->OutputString(StdOut,L"=============================================================================\r\n");
+	Print(L"=============================================================================\r\n");
 }
 
 EFI_STATUS InitializeDiskIoProtocol()
@@ -216,7 +216,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 		else
 		{
 			STATUS=EFI_OUT_OF_RESOURCES;
-			StdOut->OutputString(StdOut,L"Failed to build list of Disk Devices!\r\n");
+			Print(L"Failed to build list of Disk Devices!\r\n");
 		}
 		FreePool(HandleBuffer);
 	}
@@ -244,8 +244,8 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TAB
 		UINT16 RevHi=(UINT16)(SystemTable->Hdr.Revision>>16);
 		UINT16 RevLo=(UINT16)(SystemTable->Hdr.Revision&0xFFFF);
 		//SetConsoleModeToMaximumRows();
-		StdOut->OutputString(StdOut,L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
-		StdOut->OutputString(StdOut,L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
+		Print(L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
+		Print(L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
 		Print(L"UEFI Firmware Vendor: %s Revision: %d.%d\n",SystemTable->FirmwareVendor,RevHi,RevLo);
 		STATUS=InitializeDiskIoProtocol();
 		if(STATUS==EFI_SUCCESS)
@@ -253,7 +253,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TAB
 			EnumAllDiskPartitions();
 			FreePool(DiskDevices);
 		}
-		StdOut->OutputString(StdOut,L"Press Enter key to continue...\r\n");
+		Print(L"Press Enter key to continue...\r\n");
 		BlockUntilKeyStroke(L'\r');
 	}
 	return STATUS;
