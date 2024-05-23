@@ -60,7 +60,7 @@ INTN EfiCompareGuid(EFI_GUID *Guid1,EFI_GUID *Guid2)
     return 0;
 }
 
-INTN EnablePageBreak()
+EnablePageBreak()
 {
 		EFI_SHELL_PROTOCOL *ShellProtocol;
 		EFI_STATUS STATUS = gBS->LocateProtocol(
