@@ -63,14 +63,14 @@ INTN EfiCompareGuid(EFI_GUID *Guid1,EFI_GUID *Guid2)
 void t()
 {
 		EFI_SHELL_PROTOCOL *ShellProtocol;
-		Status = gBS->LocateProtocol(
+		EFI_STATUS STATUS = gBS->LocateProtocol(
 				&gEfiShellProtocolGuid,
 				NULL,
 				(VOID **)&ShellProtocol);
 
-		if (EFI_ERROR(Status))
+		if (EFI_ERROR(STATUS))
 		{
-				Print(L"Can't open EFI_SHELL_PROTOCOL: %r\n", Status);
+				Print(L"Can't open EFI_SHELL_PROTOCOL: %r\n", STATUS);
 				return EFI_SUCCESS;
 		}
 
