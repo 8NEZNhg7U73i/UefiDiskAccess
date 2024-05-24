@@ -60,7 +60,7 @@ INTN EfiCompareGuid(EFI_GUID *Guid1,EFI_GUID *Guid2)
     return 0;
 }
 
-void EnablePageBreak()
+EFI_STATUS EnablePageBreak()
 {
 		EFI_SHELL_PROTOCOL *ShellProtocol;
 		EFI_STATUS STATUS = gBS->LocateProtocol(
@@ -68,6 +68,7 @@ void EnablePageBreak()
 				NULL,
 				(VOID **)&ShellProtocol);
 		ShellProtocol->EnablePageBreak();
+		return EFI_SUCCESS;
 }
 
 void SetConsoleModeToMaximumRows()
