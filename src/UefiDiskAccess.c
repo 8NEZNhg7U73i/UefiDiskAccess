@@ -187,7 +187,7 @@ void EnumAllDiskPartitions()
 	for(UINTN i=0;i<NumberOfDiskDevices;i++)
 	{
 		// Skip absent media and Part media.
-		if(DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
+		//if(DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
 		if(DiskDevices[i].BlockIo->Media->MediaPresent)
 		{
 			CHAR16 *DiskDevicePath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
