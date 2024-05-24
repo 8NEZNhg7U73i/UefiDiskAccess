@@ -125,8 +125,9 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 				{
 					UINT32 StartLBA=*(UINT32*)Part->StartingLBA;
 					UINT32 SizeInLBA=*(UINT32*)Part->SizeInLBA;
-					CHAR16 ScaledStart[32],ScaledSize[32];
+					CHAR16 ScaledStart[32],ScaledEnd[32],ScaledSize[32];
 					DisplaySize(__emulu(StartLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
+					DisplaySize(__emulu(EndLBA,BlockIoProtocol->Media->BlockSize),ScaledEnd,sizeof(ScaledEnd));
 					DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
 					Print(L"MBR Part %d: OS Type: 0x%02X  Start Position: %s  Part Size: %s\n",i,Part->OSIndicator,ScaledStart,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize);
 					if(Part->OSIndicator==PMBR_GPT_PARTITION || Part->OSIndicator==EFI_PARTITION)
@@ -155,8 +156,10 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 												if(EfiCompareGuid(&PartitionEntry->PartitionTypeGUID,&gEfiPartTypeUnusedGuid))
 												{
 													DisplaySize(MultU64x32(PartitionEntry->StartingLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
+													DisplaySize(MultU64x32(PartitionEntry->EndingLBA,BlockIoProtocol->Media->BlockSize),ScaledEnd,sizeof(ScaledEnd));
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
-													Print(L"GPT Part %u: Start Position: %s Part Size: %s\n",j,ScaledStart,ScaledSize);
+													Print(L"GPT Part %u: Start: %s End: %s Size: %s\n",j,ScaledStart,ScaledEnd,ScaledSize);
+													Print(L"GPT Part %u: Start: %u End: %u Size: %u\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
 													Print(L"Part Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
 													Print(L"Unique Part GUID:  {%g}\n",&PartitionEntry->UniquePartitionGUID);
 												}
@@ -260,7 +263,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TAB
 	{
 		UINT16 RevHi=(UINT16)(SystemTable->Hdr.Revision>>16);
 		UINT16 RevLo=(UINT16)(SystemTable->Hdr.Revision&0xFFFF);
-		//SetConsoleModeToMaximumRows();
+		SetConsoleModeToMaximumRows();
 		EnablePageBreak();
 		Print(L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
 		Print(L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
