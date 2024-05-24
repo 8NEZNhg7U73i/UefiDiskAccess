@@ -224,7 +224,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 					{
 						Print(L"Image was loaded from map: %s, Disk Device: %s\r\n", MapName, DevPath);
 						FreePool(DevPath);
-						FREEPOOL(MapName);
+						FreePool(MapName);
 					}
 					CurrentDiskDevice=&DiskDevices[i];
 				}
