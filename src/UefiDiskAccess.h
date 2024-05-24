@@ -31,7 +31,7 @@ typedef struct _DISK_DEVICE_OBJECT
 {
 	EFI_DEVICE_PATH_PROTOCOL* DevicePath;
 	EFI_BLOCK_IO_PROTOCOL* BlockIo;
-	CHAR16* CurrentName;
+	CONST CHAR16* CurrentName;
 }DISK_DEVICE_OBJECT;
 
 EFI_STATUS EFIAPI UefiBootServicesTableLibConstructor(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TABLE *SystemTable);
