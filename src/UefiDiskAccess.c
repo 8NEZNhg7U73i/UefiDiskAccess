@@ -67,7 +67,10 @@ EFI_STATUS EnablePageBreak()
 				&gEfiShellProtocolGuid,
 				NULL,
 				(VOID **)&ShellProtocol);
-		ShellProtocol->EnablePageBreak();
+		if (STATUS == EFI_SUCCESS)
+		{
+				ShellProtocol->EnablePageBreak();
+		}
 		return EFI_SUCCESS;
 }
 
