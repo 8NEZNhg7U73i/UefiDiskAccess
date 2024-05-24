@@ -120,7 +120,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 				Print(L"Invalid MBR Signature! MBR might be corrupted!\r\n");
 			for(UINT8 i=0;i<MAX_MBR_PARTITIONS;i++)
 			{
-				MBR_PARTITION_RECORD *Part=&MBRContent.Part[i];
+				MBR_PARTITION_RECORD *Part=&MBRContent.Partition[i];
 				if(Part->OSIndicator)
 				{
 					UINT32 StartLBA=*(UINT32*)Part->StartingLBA;
