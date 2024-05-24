@@ -214,8 +214,8 @@ EFI_STATUS InitializeDiskIoProtocol()
 			for(UINTN i=0;i<BuffCount;i++)
 			{
 				DiskDevices[i].DevicePath=DevicePathFromHandle(HandleBuffer[i]);
-				gBS->HandleProtocol(HandleBuffer[i],&gEfiBlockIoProtocolGuid,&DiskDevices[i].BlockIo);
 				DiskDevices[i].CurrentName=gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[i].DevicePath);
+				gBS->HandleProtocol(HandleBuffer[i],&gEfiBlockIoProtocolGuid,&DiskDevices[i].BlockIo);
 				if(HandleBuffer[i]==CurrentImage->DeviceHandle)
 				{
 					CHAR16* DevPath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
