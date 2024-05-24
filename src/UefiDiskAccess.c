@@ -125,7 +125,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 				{
 					UINT32 StartLBA=*(UINT32*)Part->StartingLBA;
 					UINT32 SizeInLBA=*(UINT32*)Part->SizeInLBA;
-					UINT32 EneLBA=*(StartLBA + SizeInLBA - 1)
+					UINT32 EneLBA=*(StartLBA + SizeInLBA - 1);
 					CHAR16 ScaledStart[32],ScaledEnd[32],ScaledSize[32];
 					DisplaySize(__emulu(StartLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
 					DisplaySize(__emulu(EndLBA,BlockIoProtocol->Media->BlockSize),ScaledEnd,sizeof(ScaledEnd));
