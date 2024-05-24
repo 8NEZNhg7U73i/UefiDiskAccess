@@ -191,7 +191,7 @@ void EnumAllDiskPartitions()
 				Print(L"=============================================================================\r\n");
 				Print(L"Partition Info of Device Path: %s\n",DiskDevicePath);
 				FreePool(DiskDevicePath);
-				Print(L"Block Size: %d bytes. Last LBA: 0x%llX.\n",DiskDevices[i].BlockIo->Media->BlockSize,DiskDevices[i].BlockIo->Media->LastBlock);
+				Print(L"Block Size: %d bytes. Last LBA: 0x%llX (%d).\n",DiskDevices[i].BlockIo->Media->BlockSize,DiskDevices[i].BlockIo->Media->LastBlock,DiskDevices[i].BlockIo->Media->LastBlock);
 				EnumDiskPartitions(DiskDevices[i].BlockIo);
 			}
 		}
