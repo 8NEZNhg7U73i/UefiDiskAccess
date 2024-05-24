@@ -130,7 +130,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 					DisplaySize(__emulu(StartLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
 					DisplaySize(__emulu(EndLBA,BlockIoProtocol->Media->BlockSize),ScaledEnd,sizeof(ScaledEnd));
 					DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
-					Print(L"MBR Part %d: OS Type: 0x%02X  Start Position: %s  Part Size: %s\n",i,Part->OSIndicator,ScaledStart,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize);
+					Print(L"MBR Part %d: OS Type: 0x%02X Start: %s End: %s Size: %s\n",i,Part->OSIndicator,ScaledStart,ScaledEnd,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize);
 					if(Part->OSIndicator==PMBR_GPT_PARTITION || Part->OSIndicator==EFI_PARTITION)
 					{
 						EFI_PARTITION_TABLE_HEADER *GptHeader=AllocatePool(BlockIoProtocol->Media->BlockSize);
@@ -188,6 +188,7 @@ void EnumAllDiskPartitions()
 	{
 		// Skip absent media and Part media.
 		if(DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
+		if(DiskDevices[i].BlockIo->Media->MediaPresent)
 		{
 			CHAR16 *DiskDevicePath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
 			if(DiskDevicePath)
