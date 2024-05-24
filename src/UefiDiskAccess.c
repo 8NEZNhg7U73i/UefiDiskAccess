@@ -221,7 +221,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 					CHAR16* DevPath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
 					if(DevPath)
 					{
-						Print(L"Image was loaded from Disk Device: %s\r\n",DevPath);
+						Print(L"Image was loaded from map: %s, Disk Device: %s\r\n",&DiskDevices[i].CurrentName, DevPath);
 						FreePool(DevPath);
 					}
 					CurrentDiskDevice=&DiskDevices[i];
