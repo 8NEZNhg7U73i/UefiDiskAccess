@@ -120,16 +120,16 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 				Print(L"Invalid MBR Signature! MBR might be corrupted!\r\n");
 			for(UINT8 i=0;i<MAX_MBR_PARTITIONS;i++)
 			{
-				MBR_PARTITION_RECORD *Partition=&MBRContent.Partition[i];
-				if(Partition->OSIndicator)
+				MBR_PARTITION_RECORD *Part=&MBRContent.Part[i];
+				if(Part->OSIndicator)
 				{
-					UINT32 StartLBA=*(UINT32*)Partition->StartingLBA;
-					UINT32 SizeInLBA=*(UINT32*)Partition->SizeInLBA;
+					UINT32 StartLBA=*(UINT32*)Part->StartingLBA;
+					UINT32 SizeInLBA=*(UINT32*)Part->SizeInLBA;
 					CHAR16 ScaledStart[32],ScaledSize[32];
 					DisplaySize(__emulu(StartLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
 					DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
-					Print(L"MBR Partition %d: OS Type: 0x%02X  Start Position: %s  Partition Size: %s\n",i,Partition->OSIndicator,ScaledStart,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize);
-					if(Partition->OSIndicator==PMBR_GPT_PARTITION || Partition->OSIndicator==EFI_PARTITION)
+					Print(L"MBR Part %d: OS Type: 0x%02X  Start Position: %s  Part Size: %s\n",i,Part->OSIndicator,ScaledStart,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize);
+					if(Part->OSIndicator==PMBR_GPT_PARTITION || Part->OSIndicator==EFI_PARTITION)
 					{
 						EFI_PARTITION_TABLE_HEADER *GptHeader=AllocatePool(BlockIoProtocol->Media->BlockSize);
 						if(GptHeader)
@@ -143,7 +143,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 								{
 									UINT32 PartitionEntrySize=GptHeader->SizeOfPartitionEntry*GptHeader->NumberOfPartitionEntries;
 									VOID* PartitionEntries=AllocatePool(PartitionEntrySize);
-									Print(L"Disk GUID: {%g}  Partition Array LBA: %u  Number of Partitions: %u\n",&GptHeader->DiskGUID,GptHeader->PartitionEntryLBA,GptHeader->NumberOfPartitionEntries);
+									Print(L"Disk GUID: {%g}  Part Array LBA: %u (%u) Number of Partitions: %u\n",&GptHeader->DiskGUID,GptHeader->PartitionEntryLBA,GptHeader->PartitionEntryLBA,GptHeader->NumberOfPartitionEntries);
 									if(PartitionEntries)
 									{
 										STATUS=BlockIoProtocol->ReadBlocks(BlockIoProtocol,BlockIoProtocol->Media->MediaId,GptHeader->PartitionEntryLBA,PartitionEntrySize,PartitionEntries);
@@ -156,9 +156,9 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 												{
 													DisplaySize(MultU64x32(PartitionEntry->StartingLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
-													Print(L"GPT Partition %u: Start Position: %s Partition Size: %s\n",j,ScaledStart,ScaledSize);
-													Print(L"Partition Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
-													Print(L"Unique Partition GUID:  {%g}\n",&PartitionEntry->UniquePartitionGUID);
+													Print(L"GPT Part %u: Start Position: %s Part Size: %s\n",j,ScaledStart,ScaledSize);
+													Print(L"Part Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
+													Print(L"Unique Part GUID:  {%g}\n",&PartitionEntry->UniquePartitionGUID);
 												}
 											}
 										}
@@ -182,16 +182,16 @@ void EnumAllDiskPartitions()
 {
 	for(UINTN i=0;i<NumberOfDiskDevices;i++)
 	{
-		// Skip absent media and partition media.
+		// Skip absent media and Part media.
 		if(DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
 		{
 			CHAR16 *DiskDevicePath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
 			if(DiskDevicePath)
 			{
 				Print(L"=============================================================================\r\n");
-				Print(L"Partition Info of Device Path: %s\n",DiskDevicePath);
+				Print(L"Part Info of Device Path: %s\n",DiskDevicePath);
 				FreePool(DiskDevicePath);
-				Print(L"Block Size: %d bytes. Last LBA: 0x%llX (%d).\n",DiskDevices[i].BlockIo->Media->BlockSize,DiskDevices[i].BlockIo->Media->LastBlock,DiskDevices[i].BlockIo->Media->LastBlock);
+				Print(L"Last LBA: 0x%llX (%u).\n",DiskDevices[i].BlockIo->Media->LastBlock,DiskDevices[i].BlockIo->Media->LastBlock);
 				EnumDiskPartitions(DiskDevices[i].BlockIo);
 			}
 		}
@@ -214,6 +214,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 			for(UINTN i=0;i<BuffCount;i++)
 			{
 				DiskDevices[i].DevicePath=DevicePathFromHandle(HandleBuffer[i]);
+				DiskDevices[i].CurrentName=gEfiShellProtocol->GetMapFromDevicePath (DiskDevices[i].DevicePath);
 				gBS->HandleProtocol(HandleBuffer[i],&gEfiBlockIoProtocolGuid,&DiskDevices[i].BlockIo);
 				if(HandleBuffer[i]==CurrentImage->DeviceHandle)
 				{
