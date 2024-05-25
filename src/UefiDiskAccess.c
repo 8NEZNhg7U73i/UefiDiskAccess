@@ -251,6 +251,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 {
 	UINTN BuffCount=0;
 	EFI_HANDLE *HandleBuffer=NULL;
+	CONST CHAR16* CurrentName;
 	// Locate all devices that support Disk I/O Protocol.
 	EFI_STATUS STATUS=gBS->LocateHandleBuffer(ByProtocol,&gEfiBlockIoProtocolGuid,NULL,&BuffCount,&HandleBuffer);
 	if(STATUS==EFI_SUCCESS)
@@ -268,8 +269,8 @@ EFI_STATUS InitializeDiskIoProtocol()
 					CHAR16* DevPath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
 					if(DevPath)
 					{
-						DiskDevices[i].CurrentName=gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[i].DevicePath);
-						CHAR16* MapName=StrnCatGrow(&MapName, 0, DiskDevices[i].CurrentName,0);
+						CurrentName=gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[i].DevicePath);
+						CHAR16* MapName=StrnCatGrow(&MapName, 0, CurrentName,0);
 						Print(L"Image was loaded from map: %s, Disk Device: %s\r\n", MapName, DevPath);
 						FreePool(DevPath);
 						FreePool(MapName);
