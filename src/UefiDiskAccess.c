@@ -213,7 +213,8 @@ void EnumAllDiskPartitions()
 	Print(L"=============================================================================\r\n");
 }
 
-EFI_STATUS GetFirstGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID* GptSignature) {
+EFI_STATUS GetFirstGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID* GptSignature)
+{
 	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
 
 	if (!DevicePath || !GptSignature)
@@ -262,13 +263,13 @@ EFI_STATUS InitializeDiskIoProtocol()
 			for(UINTN i=0;i<BuffCount;i++)
 			{
 				DiskDevices[i].DevicePath=DevicePathFromHandle(HandleBuffer[i]);
-				gBS->HandleProtocol(HandleBuffer[i],&gEfiBlockIoProtocolGuid,DiskDevices[i]->BlockIo);
+				gBS->HandleProtocol(HandleBuffer[i],&gEfiBlockIoProtocolGuid,&DiskDevices[i].BlockIo);
 				if(HandleBuffer[i]==CurrentImage->DeviceHandle)
 				{
 					CHAR16* DevPath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
 					if(DevPath)
 					{
-						DiskDevices[i].CurrentName=gEfiShellProtocol->GetMapFromDevicePath(DiskDevices[i]->DevicePath);
+						DiskDevices[i].CurrentName=gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[i].DevicePath);
 						CHAR16* MapName=StrnCatGrow(&MapName, 0, DiskDevices[i].CurrentName,0);
 						Print(L"Image was loaded from map: %s, Disk Device: %s\r\n", MapName, DevPath);
 						FreePool(DevPath);
