@@ -173,14 +173,14 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 															STATUS=FindGptSignature(DiskDevices[k].DevicePath, &PartitionEntry->UniquePartitionGUID);
 															if (STATUS==EFI_SUCCESS)
 															{
-																Print(L"GPT Part %u, Block number %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",k,j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,ScaledSize,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
+																Print(L"GPT Part %u, Block number %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",k,j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,ScaledSize);
 																//Print(L"GPT Part %u, Block number %u : StartLBA: %u EndLBA: %u Size: %u\n",k,j,,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
 																break;
 															}
 														}
 														if (k==NumberOfDiskDevices-1)
 														{
-																Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,ScaledSize,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
+																Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,ScaledSize);
 															//Print(L"GPT Part %u: Start: %s End: %s Size: %s\n",j,ScaledStart,ScaledEnd,ScaledSize);
 															//Print(L"GPT Part %u: Start: %u End: %u Size: %u\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
 														}
