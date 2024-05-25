@@ -171,7 +171,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 																break;
 															}
 														}
-														if (k = NumberOfDiskDevices - 1)
+														if (k==NumberOfDiskDevices-1)
 														{
 															Print(L"GPT Part %u: Start: %s End: %s Size: %s\n",j,ScaledStart,ScaledEnd,ScaledSize);
 															Print(L"GPT Part %u: Start: %u End: %u Size: %u\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
@@ -204,7 +204,7 @@ void EnumAllDiskPartitions()
 	{
 		// Skip absent media and partition media.
 		if(DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
-		{
+		CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
 			Print(L"=============================================================================\r\n");
 			Print(L"Part Info of Device %u Path: %s\n", i, DiskDevicePath);
 			FreePool(DiskDevicePath);
