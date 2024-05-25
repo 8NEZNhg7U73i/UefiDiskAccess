@@ -275,7 +275,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 {
 	UINTN BuffCount = 0;
 	EFI_HANDLE *HandleBuffer = NULL;
-	CONST CHAR16 *CurrentName;
+	// CONST CHAR16 *CurrentName;
 	// Locate all devices that support Disk I/O Protocol.
 	EFI_STATUS STATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BuffCount, &HandleBuffer);
 	if (STATUS == EFI_SUCCESS)
