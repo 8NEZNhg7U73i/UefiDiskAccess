@@ -193,6 +193,38 @@ void EnumAllDiskPartitions()
 	Print(L"=============================================================================\r\n");
 }
 
+EFI_STATUS GetFirstGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID* GptSignature)
+{
+	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
+	if (!DevicePath || !GptSignature)
+	{
+		return EFI_INVALID_PARAMETER;
+	}
+	while (!IsDevicePathEnd(DevicePath))
+	{
+		DevicePathMask = DevicePath;
+		DevicePath = NextDevicePathNode(DevicePath);
+		if (DevicePathMask->Header.Type != MEDIA_DEVICE_PATH)
+		{
+			continue;
+		}
+		/*
+		if(DevicePathMask->Header.SubType != MEDIA_HARDDRIVE_DP) {
+				continue;
+		}
+		*/
+		// Check if the device path describes a GPT partition or disk
+		if (DevicePathMask->SignatureType != 2)
+		{
+			continue;
+		}
+		if(!CompareMem (GptSignature, DevicePathMask->Signature, sizeof(EFI_GUID))){
+			return EFI_SUCCESS;
+		}
+	}
+	return EFI_NOT_FOUND;
+}
+
 EFI_STATUS InitializeDiskIoProtocol()
 {
 	UINTN BuffCount=0;
