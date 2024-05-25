@@ -161,7 +161,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 														CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[k].DevicePath, FALSE, FALSE);
 														if (DiskDevices[k].DevicePath)
 														{
-															Print(L"Block Device %u Path: %s\n", k, DiskDevicePath);
+															//Print(L"Block Device %u Path: %s\n", k, DiskDevicePath);
 															STATUS=GetFirstGptSignature(DiskDevices[k].DevicePath, &PartitionEntry->UniquePartitionGUID);
 															if (STATUS==EFI_SUCCESS)
 															{
