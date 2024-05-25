@@ -161,7 +161,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 														//CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
 														if (DiskDevices[i].DevicePath)
 														{
-															STATUS=GetFirstGptSignature(DiskDevices[i].DevicePath, PartitionEntry->UniquePartitionGUID);
+															STATUS=GetFirstGptSignature(DiskDevices[i].DevicePath, &PartitionEntry->UniquePartitionGUID);
 															if (STATUS==EFI_SUCCESS)
 															{
 																Print(L"Block handel number: %s\r\n",j);
