@@ -176,10 +176,10 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 																Print(L"GPT Part %u, Block number %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",k,j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,ScaledSize);
 																break;
 															}
-														}
-														if (k==NumberOfDiskDevices-1)
-														{
-																Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,ScaledSize);
+															if (k==NumberOfDiskDevices-1)
+															{
+																Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", j, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
+															}
 														}
 													}
 													Print(L"Part Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
