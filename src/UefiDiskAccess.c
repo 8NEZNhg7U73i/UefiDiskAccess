@@ -127,17 +127,6 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 					UINT32 SizeInLBA=*(UINT32*)Part->SizeInLBA;
 					UINT32 EndLBA=(StartLBA + SizeInLBA - 1);
 					CHAR16 ScaledStart[32],ScaledEnd[32],ScaledSize[32];
-					DisplaySize(__emulu(StartLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
-					DisplaySize(__emulu(EndLBA,BlockIoProtocol->Media->BlockSize),ScaledEnd,sizeof(ScaledEnd));
-					DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
-					if(SizeInLBA==0xFFFFFFFF)
-					{
-						Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %s Size: Over 2TiB\n",i,Part->OSIndicator,StartLBA,ScaledEnd);
-					}
-					else
-					{
-						Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",i,Part->OSIndicator,StartLBA,EndLBA,SizeInLBA,ScaledSize);
-					}
 					if(Part->OSIndicator==PMBR_GPT_PARTITION || Part->OSIndicator==EFI_PARTITION)
 					{
 						EFI_PARTITION_TABLE_HEADER *GptHeader=AllocatePool(BlockIoProtocol->Media->BlockSize);
@@ -215,6 +204,20 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 							else
 								Print(L"Failed to read GPT Header! Status=0x%p\n",STATUS);
 							FreePool(GptHeader);
+						}
+					}
+					else
+					{
+						DisplaySize(__emulu(StartLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
+						DisplaySize(__emulu(EndLBA,BlockIoProtocol->Media->BlockSize),ScaledEnd,sizeof(ScaledEnd));
+						DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
+						if(SizeInLBA==0xFFFFFFFF)
+						{
+							Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %s Size: Over 2TiB\n",i,Part->OSIndicator,StartLBA,ScaledEnd);
+						}
+						else
+						{
+							Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",i,Part->OSIndicator,StartLBA,EndLBA,SizeInLBA,ScaledSize);
 						}
 					}
 				}
