@@ -173,7 +173,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 															STATUS=FindGptSignature(DiskDevices[k].DevicePath, &PartitionEntry->UniquePartitionGUID);
 															if (STATUS==EFI_SUCCESS)
 															{
-																Print(L"GPT Part %u, Block Device number %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",j,k,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,ScaledSize);
+																Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",j,k,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,ScaledSize);
 																break;
 															}
 															if (k==NumberOfDiskDevices-1)
@@ -257,11 +257,6 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID
 		{
 			continue;
 		}
-		/*
-		if(DevicePathMask->Header.SubType != MEDIA_HARDDRIVE_DP) {
-				continue;
-		}
-		*/
 		// Check if the device path describes a GPT partition or disk
 		if (DevicePathMask->SignatureType != 2)
 		{
