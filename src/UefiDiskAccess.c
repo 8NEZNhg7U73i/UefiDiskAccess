@@ -247,7 +247,6 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID
 			continue;
 		}
 		if(!CompareMem (GptSignature, DevicePathMask->Signature, sizeof(EFI_GUID))){
-			Print(L"%s\n",&DevicePath);
 			return EFI_SUCCESS;
 		}
 	}
