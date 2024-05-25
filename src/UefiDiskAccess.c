@@ -161,7 +161,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 														CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[k].DevicePath, FALSE, FALSE);
 														if (DiskDevices[k].DevicePath)
 														{
-															Print(L"Part Info of Device %u Path: %s\n", k, DiskDevicePath);
+															Print(L"Block Device %u Path: %s\n", k, DiskDevicePath);
 															STATUS=GetFirstGptSignature(DiskDevices[k].DevicePath, &PartitionEntry->UniquePartitionGUID);
 															if (STATUS==EFI_SUCCESS)
 															{
@@ -217,6 +217,7 @@ void EnumAllDiskPartitions()
 EFI_STATUS GetFirstGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID* GptSignature)
 {
 	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
+	EFI_STATUS = STATUS;
 
 	if (!DevicePath || !GptSignature)
 	{
@@ -242,8 +243,9 @@ EFI_STATUS GetFirstGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_
 		{
 			continue;
 		}
-		CopyMem(GptSignature, DevicePathMask->Signature, sizeof(EFI_GUID));
-		return EFI_SUCCESS;
+		if(!memcmp(GptSignature, DevicePathMask->Signature, sizeof(EFI_GUID))){
+			return EFI_SUCCESS;
+		}
 	}
 
 	return EFI_NOT_FOUND;
