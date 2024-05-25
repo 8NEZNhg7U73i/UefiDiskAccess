@@ -132,7 +132,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 					DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
 					if(SizeInLBA==0xFFFFFFFF)
 					{
-						Print(L"MBR Part %d: OS Type: 0x%02X Start: %s End: %s Size: %s\n",i,Part->OSIndicator,ScaledStart,ScaledEnd,ScaledSize);
+						Print(L"MBR Part %d: OS Type: 0x%02X Start: %s End: %s Size: Over 2TiB\n",i,Part->OSIndicator,ScaledStart,ScaledEnd);
 					}
 					else
 					{
