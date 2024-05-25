@@ -217,7 +217,7 @@ void EnumAllDiskPartitions()
 EFI_STATUS GetFirstGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID* GptSignature)
 {
 	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
-	EFI_STATUS STATUS=NULL;
+	EFI_STATUS STATUS;
 
 	if (!DevicePath || !GptSignature)
 	{
