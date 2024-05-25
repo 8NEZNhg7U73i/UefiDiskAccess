@@ -293,11 +293,12 @@ EFI_STATUS InitializeDiskIoProtocol()
 					CHAR16 *DevPath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
 					if (DevPath)
 					{
-						CurrentName = gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[i].DevicePath);
-						CHAR16 *MapName = StrnCatGrow(&MapName, 0, CurrentName, 0);
-						Print(L"Image was loaded from map: %s, Disk Device: %s\r\n", MapName, DevPath);
+						// CurrentName = gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[i].DevicePath);
+						// CHAR16 *MapName = StrnCatGrow(&MapName, 0, CurrentName, 0);
+						// Print(L"Image was loaded from map: %s, Disk Device: %s\r\n", MapName, DevPath);
+						Print(L"Image was loaded from Disk Device: %s\r\n", DevPath);
 						FreePool(DevPath);
-						FreePool(MapName);
+						// FreePool(MapName);
 					}
 				}
 			}
