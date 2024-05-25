@@ -130,7 +130,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 					DisplaySize(__emulu(StartLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
 					DisplaySize(__emulu(EndLBA,BlockIoProtocol->Media->BlockSize),ScaledEnd,sizeof(ScaledEnd));
 					DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
-					Print(L"MBR Part %d: OS Type: 0x%02X Start: %s End: %s Size: %s\n",i,Part->OSIndicator,ScaledStart,ScaledEnd,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize);
+					Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %u Size: %s LBASize: %u\n",i,Part->OSIndicator,StartLBA,EndLBA,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":SizeInLBA);
 					if(Part->OSIndicator==PMBR_GPT_PARTITION || Part->OSIndicator==EFI_PARTITION)
 					{
 						EFI_PARTITION_TABLE_HEADER *GptHeader=AllocatePool(BlockIoProtocol->Media->BlockSize);
@@ -166,15 +166,16 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 															STATUS=FindGptSignature(DiskDevices[k].DevicePath, &PartitionEntry->UniquePartitionGUID);
 															if (STATUS==EFI_SUCCESS)
 															{
-																Print(L"Block number%u GPT Part %u: Start: %s End: %s Size: %s\n",k,j,ScaledStart,ScaledEnd,ScaledSize);
-																Print(L"Block number%u GPT Part %u: Start: %u End: %u Size: %u\n",k,j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
+																Print(L"GPT Part %u, Block number %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",k,j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,ScaledSize,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
+																//Print(L"GPT Part %u, Block number %u : StartLBA: %u EndLBA: %u Size: %u\n",k,j,,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
 																break;
 															}
 														}
 														if (k==NumberOfDiskDevices-1)
 														{
-															Print(L"GPT Part %u: Start: %s End: %s Size: %s\n",j,ScaledStart,ScaledEnd,ScaledSize);
-															Print(L"GPT Part %u: Start: %u End: %u Size: %u\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
+																Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,ScaledSize,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
+															//Print(L"GPT Part %u: Start: %s End: %s Size: %s\n",j,ScaledStart,ScaledEnd,ScaledSize);
+															//Print(L"GPT Part %u: Start: %u End: %u Size: %u\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
 														}
 													}
 													Print(L"Part Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
