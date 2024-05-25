@@ -59,6 +59,7 @@ EFI_GUID gEfiPartTypeUnusedGuid=EFI_PART_TYPE_UNUSED_GUID;
 EFI_GUID gEfiLoadedImageProtocolGuid=EFI_LOADED_IMAGE_PROTOCOL_GUID;
 
 UINTN NumberOfDiskDevices=0;
+UINTN CurrentDiskDevices=0;
 DISK_DEVICE_OBJECT *DiskDevices=NULL;
 DISK_DEVICE_OBJECT *CurrentDiskDevice=NULL;
 
