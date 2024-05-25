@@ -184,21 +184,18 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 
 void EnumAllDiskPartitions()
 {
-	for(UINTN i=0;i<NumberOfDiskDevices;i++)
+	for (UINTN i = 0; i < NumberOfDiskDevices; i++)
 	{
 		// Skip absent media and Part media.
-		//if(DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
-		if(DiskDevices[i].BlockIo->Media->MediaPresent)
+		// if(DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
+		CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
+		if (DiskDevicePath)
 		{
-			CHAR16 *DiskDevicePath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
-			if(DiskDevicePath)
-			{
-				Print(L"=============================================================================\r\n");
-				Print(L"Part Info of Device %u Path: %s\n",i,DiskDevicePath);
-				FreePool(DiskDevicePath);
-				Print(L"Last LBA: 0x%llX (%u).\n",DiskDevices[i].BlockIo->Media->LastBlock,DiskDevices[i].BlockIo->Media->LastBlock);
-				EnumDiskPartitions(DiskDevices[i].BlockIo);
-			}
+			Print(L"=============================================================================\r\n");
+			Print(L"Part Info of Device %u Path: %s\n", i, DiskDevicePath);
+			FreePool(DiskDevicePath);
+			Print(L"Last LBA: 0x%llX (%u).\n", DiskDevices[i].BlockIo->Media->LastBlock, DiskDevices[i].BlockIo->Media->LastBlock);
+			EnumDiskPartitions(DiskDevices[i].BlockIo);
 		}
 	}
 	Print(L"=============================================================================\r\n");
