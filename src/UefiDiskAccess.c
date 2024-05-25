@@ -158,7 +158,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 												{
 													for(UINT32 k=0;k<NumberOfDiskDevices;k++)
 													{
-														CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[k].DevicePath, FALSE, FALSE);
+														//CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[k].DevicePath, FALSE, FALSE);
 														if (DiskDevices[k].DevicePath)
 														{
 															//Print(L"Block Device %u Path: %s\n", k, DiskDevicePath);
