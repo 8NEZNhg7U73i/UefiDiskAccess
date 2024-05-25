@@ -243,7 +243,7 @@ EFI_STATUS GetFirstGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_
 		{
 			continue;
 		}
-		if(!memcmp(GptSignature, DevicePathMask->Signature, sizeof(EFI_GUID))){
+		if(!CompareMem (GptSignature, DevicePathMask->Signature, sizeof(EFI_GUID))){
 			return EFI_SUCCESS;
 		}
 	}
