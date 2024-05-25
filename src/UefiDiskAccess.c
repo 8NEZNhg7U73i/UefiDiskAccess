@@ -174,15 +174,12 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 															if (STATUS==EFI_SUCCESS)
 															{
 																Print(L"GPT Part %u, Block number %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",k,j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,ScaledSize);
-																//Print(L"GPT Part %u, Block number %u : StartLBA: %u EndLBA: %u Size: %u\n",k,j,,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
 																break;
 															}
 														}
 														if (k==NumberOfDiskDevices-1)
 														{
 																Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,ScaledSize);
-															//Print(L"GPT Part %u: Start: %s End: %s Size: %s\n",j,ScaledStart,ScaledEnd,ScaledSize);
-															//Print(L"GPT Part %u: Start: %u End: %u Size: %u\n",j,PartitionEntry->StartingLBA,PartitionEntry->EndingLBA,PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1);
 														}
 													}
 													Print(L"Part Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
@@ -250,6 +247,7 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID
 			continue;
 		}
 		if(!CompareMem (GptSignature, DevicePathMask->Signature, sizeof(EFI_GUID))){
+			Print(L"%s\n",DevicePath);
 			return EFI_SUCCESS;
 		}
 	}
