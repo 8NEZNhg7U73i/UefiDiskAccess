@@ -182,6 +182,19 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 															}
 														}
 													}
+													switch (&PartitionEntry->PartitionTypeGUID)
+													{
+													case &gEfiPartTypeSystemPartGuid:
+														Print(L"Part Type : efi");
+														break;
+													
+													default:
+														break;
+													}
+													if(EfiCompareGuid(&PartitionEntry->PartitionTypeGUID,&gEfiPartTypeMsReservedPartGuid))
+													{
+														Print(L"Part Type : wre");
+													}
 													Print(L"Part Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
 													Print(L"Unique Part GUID:  {%g}\n",&PartitionEntry->UniquePartitionGUID);
 												}
