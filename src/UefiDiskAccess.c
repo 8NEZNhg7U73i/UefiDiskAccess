@@ -156,6 +156,18 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 												EFI_PARTITION_ENTRY *PartitionEntry=(EFI_PARTITION_ENTRY*)((UINTN)PartitionEntries+j*GptHeader->SizeOfPartitionEntry);
 												if(EfiCompareGuid(&PartitionEntry->PartitionTypeGUID,&gEfiPartTypeUnusedGuid))
 												{
+													for(UINT32 k=0;k<NumberOfDiskDevices;k++)
+													{
+														CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
+														if (DiskDevicePath)
+														{
+															STATUS=GetFirstGptSignature(DiskDevicePath, &PartitionEntry->UniquePartitionGUID);
+															if (STATUS=EFI_SUCCESS)
+															{
+																Print(L"Block handel number: %s\r\n",j);
+															}
+														}
+													}
 													DisplaySize(MultU64x32(PartitionEntry->StartingLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA,BlockIoProtocol->Media->BlockSize),ScaledEnd,sizeof(ScaledEnd));
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA-PartitionEntry->StartingLBA+1,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
@@ -201,6 +213,40 @@ void EnumAllDiskPartitions()
 	Print(L"=============================================================================\r\n");
 }
 
+EFI_STATUS GetFirstGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID* GptSignature) {
+	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
+
+	if (!DevicePath || !GptSignature)
+	{
+		return EFI_INVALID_PARAMETER;
+	}
+
+	while (!IsDevicePathEnd(DevicePath))
+	{
+		DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DevicePath;
+		DevicePath = NextDevicePathNode(DevicePath);
+
+		if (DevicePathMask->Header.Type != MEDIA_DEVICE_PATH)
+		{
+			continue;
+		}
+		/*
+		if(DevicePathMask->Header.SubType != MEDIA_HARDDRIVE_DP) {
+				continue;
+		}
+		*/
+		// Check if the device path describes a GPT partition or disk
+		if (DevicePathMask->SignatureType != 2)
+		{
+			continue;
+		}
+		CopyMem(GptSignature, DevicePathMask->Signature, sizeof(EFI_GUID));
+		return EFI_SUCCESS;
+	}
+
+	return EFI_NOT_FOUND;
+}
+
 EFI_STATUS InitializeDiskIoProtocol()
 {
 	UINTN BuffCount=0;
@@ -216,19 +262,18 @@ EFI_STATUS InitializeDiskIoProtocol()
 			for(UINTN i=0;i<BuffCount;i++)
 			{
 				DiskDevices[i].DevicePath=DevicePathFromHandle(HandleBuffer[i]);
-				gBS->HandleProtocol(HandleBuffer[i],&gEfiBlockIoProtocolGuid,&DiskDevices[i].BlockIo);
+				gBS->HandleProtocol(HandleBuffer[i],&gEfiBlockIoProtocolGuid,DiskDevices[i]->BlockIo);
 				if(HandleBuffer[i]==CurrentImage->DeviceHandle)
 				{
 					CHAR16* DevPath=ConvertDevicePathToText(DiskDevices[i].DevicePath,FALSE,FALSE);
 					if(DevPath)
 					{
-						DiskDevices[i].CurrentName=gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[i].DevicePath);
+						DiskDevices[i].CurrentName=gEfiShellProtocol->GetMapFromDevicePath(DiskDevices[i]->DevicePath);
 						CHAR16* MapName=StrnCatGrow(&MapName, 0, DiskDevices[i].CurrentName,0);
 						Print(L"Image was loaded from map: %s, Disk Device: %s\r\n", MapName, DevPath);
 						FreePool(DevPath);
 						FreePool(MapName);
 					}
-					CurrentDiskDevice=&DiskDevices[i];
 				}
 			}
 		}
