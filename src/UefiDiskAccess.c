@@ -182,16 +182,20 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 															}
 														}
 													}
-													switch (&PartitionEntry->PartitionTypeGUID)
+
+													if (EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid))
 													{
-													case &gEfiPartTypeSystemPartGuid:
 														Print(L"Part Type : efi");
-														break;
-													
-													default:
-														break;
 													}
-													if(EfiCompareGuid(&PartitionEntry->PartitionTypeGUID,&gEfiPartTypeMsReservedPartGuid))
+													else if (EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsReservedPartGuid))
+													{
+														Print(L"Part Type : msr");
+													}
+													else if (EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeBasicDataPartGuid))
+													{
+														Print(L"Part Type : data");
+													}
+													else if (EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsRecoveryPartGuid))
 													{
 														Print(L"Part Type : wre");
 													}
