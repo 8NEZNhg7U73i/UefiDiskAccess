@@ -225,7 +225,7 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID
 	}
 	while (!IsDevicePathEnd(DevicePath))
 	{
-		DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH)DevicePath;
+		DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH*)DevicePath;
 		DevicePath = NextDevicePathNode(DevicePath);
 		if (DevicePathMask->Header.Type != MEDIA_DEVICE_PATH)
 		{
