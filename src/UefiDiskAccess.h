@@ -32,6 +32,20 @@ typedef struct _DISK_DEVICE_OBJECT
 	EFI_DEVICE_PATH_PROTOCOL* DevicePath;
 	EFI_BLOCK_IO_PROTOCOL* BlockIo;
 }DISK_DEVICE_OBJECT;
+#define EFI_PART_TYPE_BASIC_DATA_PART_GUID                                         \
+  {                                                                                \
+    0xEBD0A0A2, 0xB9E5, 0x4433, { 0x87, 0xC0, 0x68, 0xB6, 0xB7, 0x26, 0x99, 0xC7 } \
+  }
+
+#define EFI_PART_TYPE_MS_RESERVED_PART_GUID                                        \
+  {                                                                                \
+    0xE3C9E316, 0x0B5C, 0x4DB8, { 0x81, 0x7D, 0xF9, 0x2D, 0xF0, 0x02, 0x15, 0xAE } \
+  }
+
+#define EFI_PART_TYPE_MS_RECOVERY_PART_GUID                                        \
+  {                                                                                \
+    0xDE94BBA4, 0x06D1, 0x06D1, { 0xA1, 0x6A, 0xBF, 0xD5, 0x01, 0x79, 0xD6, 0xAC } \
+  }
 
 EFI_STATUS EFIAPI UefiBootServicesTableLibConstructor(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TABLE *SystemTable);
 EFI_STATUS EFIAPI UefiRuntimeServicesTableLibConstructor(IN EFI_HANDLE ImageHandle,IN EFI_SYSTEM_TABLE *SystemTable);
