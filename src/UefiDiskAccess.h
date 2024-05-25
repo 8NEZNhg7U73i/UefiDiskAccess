@@ -57,6 +57,7 @@ EFI_GUID gEfiGlobalVariableGuid=EFI_GLOBAL_VARIABLE;
 EFI_GUID gEfiBlockIoProtocolGuid=EFI_BLOCK_IO_PROTOCOL_GUID;
 EFI_GUID gEfiPartTypeUnusedGuid=EFI_PART_TYPE_UNUSED_GUID;
 EFI_GUID gEfiLoadedImageProtocolGuid=EFI_LOADED_IMAGE_PROTOCOL_GUID;
+EFI_STATUS GetFirstGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID* GptSignature)
 
 UINTN NumberOfDiskDevices=0;
 UINTN CurrentDiskDevices=0;
