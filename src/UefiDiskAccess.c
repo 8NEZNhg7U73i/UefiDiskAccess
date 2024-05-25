@@ -199,7 +199,10 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 													{
 														Print(L"Part Type : wre");
 													}
-													Print(L"Part Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
+													else
+													{
+														Print(L"Part Type GUID:    {%g}\n",&PartitionEntry->PartitionTypeGUID);
+													}
 													Print(L"Unique Part GUID:  {%g}\n",&PartitionEntry->UniquePartitionGUID);
 												}
 											}
