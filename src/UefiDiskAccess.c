@@ -132,11 +132,11 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 					DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
 					if(SizeInLBA==0xFFFFFFFF)
 					{
-						Print(L"MBR Part %d: OS Type: 0x%02X Start: %s End: %s Size: Over 2TiB\n",i,Part->OSIndicator,ScaledStart,ScaledEnd);
+						Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %s Size: Over 2TiB\n",i,Part->OSIndicator,StartLBA,ScaledEnd);
 					}
 					else
 					{
-						Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %u Size: %s LBASize: %u\n",i,Part->OSIndicator,StartLBA,EndLBA,ScaledSize,SizeInLBA);
+						Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n",i,Part->OSIndicator,StartLBA,EndLBA,SizeInLBA,ScaledSize);
 					}
 					if(Part->OSIndicator==PMBR_GPT_PARTITION || Part->OSIndicator==EFI_PARTITION)
 					{
@@ -152,7 +152,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 								{
 									UINT32 PartitionEntrySize=GptHeader->SizeOfPartitionEntry*GptHeader->NumberOfPartitionEntries;
 									VOID* PartitionEntries=AllocatePool(PartitionEntrySize);
-									Print(L"Disk GUID: {%g} Part Array LBA: %u Number of Partitions: %u\n",&GptHeader->DiskGUID,GptHeader->PartitionEntryLBA,GptHeader->NumberOfPartitionEntries);
+									Print(L"Disk GUID: {%g} Number of Partitions: %u\n",&GptHeader->DiskGUID,GptHeader->NumberOfPartitionEntries);
 									if(PartitionEntries)
 									{
 										STATUS=BlockIoProtocol->ReadBlocks(BlockIoProtocol,BlockIoProtocol->Media->MediaId,GptHeader->PartitionEntryLBA,PartitionEntrySize,PartitionEntries);
