@@ -130,7 +130,14 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 					DisplaySize(__emulu(StartLBA,BlockIoProtocol->Media->BlockSize),ScaledStart,sizeof(ScaledStart));
 					DisplaySize(__emulu(EndLBA,BlockIoProtocol->Media->BlockSize),ScaledEnd,sizeof(ScaledEnd));
 					DisplaySize(__emulu(SizeInLBA,BlockIoProtocol->Media->BlockSize),ScaledSize,sizeof(ScaledSize));
-					Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %u Size: %s LBASize: %u\n",i,Part->OSIndicator,StartLBA,EndLBA,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":SizeInLBA);
+					if(SizeInLBA==0xFFFFFFFF)
+					{
+						Print(L"MBR Part %d: OS Type: 0x%02X Start: %s End: %s Size: %s\n",i,Part->OSIndicator,ScaledStart,ScaledEnd,SizeInLBA==0xFFFFFFFF?L"Over 2TiB":ScaledSize);
+					}
+					else
+					{
+						Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %u Size: %s LBASize: %u\n",i,Part->OSIndicator,StartLBA,EndLBA,ScaledSize,SizeInLBA);
+					}
 					if(Part->OSIndicator==PMBR_GPT_PARTITION || Part->OSIndicator==EFI_PARTITION)
 					{
 						EFI_PARTITION_TABLE_HEADER *GptHeader=AllocatePool(BlockIoProtocol->Media->BlockSize);
