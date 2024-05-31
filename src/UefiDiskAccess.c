@@ -289,7 +289,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 			{
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
 				gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
-				if (HandleBuffer[i] == CurrentImage->DeviceHandle)
+				if (HandleBuffer[i] == CurrentImage)
 				{
 					CHAR16 *DevPath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
 					if (DevPath)
@@ -297,7 +297,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 						// CurrentName = gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[i].DevicePath);
 						// CHAR16 *MapName = StrnCatGrow(&MapName, 0, CurrentName, 0);
 						// Print(L"Image was loaded from map: %s, Disk Device: %s\r\n", MapName, DevPath);
-						Print(L"Image was loaded from Disk Device: %s\r\n", DevPath);
+						Print(L"Image was loaded from: %s\r\n", DevPath);
 						FreePool(DevPath);
 						// FreePool(MapName);
 					}
@@ -335,7 +335,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 		UINT16 RevHi = (UINT16)(SystemTable->Hdr.Revision >> 16);
 		UINT16 RevLo = (UINT16)(SystemTable->Hdr.Revision & 0xFFFF);
 		SetConsoleModeToMaximumRows();
-		//EnablePageBreak();
+		EnablePageBreak();
 		Print(L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
 		Print(L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
 		Print(L"UEFI Firmware Vendor: %s Revision: %d.%d\n", SystemTable->FirmwareVendor, RevHi, RevLo);
@@ -345,8 +345,8 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 			EnumAllDiskPartitions();
 			FreePool(DiskDevices);
 		}
-		// Print(L"Press Enter key to continue...\r\n");
-		// BlockUntilKeyStroke(L'\r');
+		Print(L"Press Enter key to continue...\r\n");
+		BlockUntilKeyStroke(L'\r');
 	}
 	return STATUS;
 }
