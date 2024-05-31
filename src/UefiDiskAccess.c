@@ -139,7 +139,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 									Print(L"Improper GPT Header Signature!");
 								else
 								{
-									Print(L"GPT Header Detected! First usable LBA: %u. Last usable LBA: %u.", GptHeader->FirstUsableLBA, GptHeader->LastUsableLBA);
+									Print(L"GPT Header Detected! First usable LBA: %u. Last usable LBA: %u.\n", GptHeader->FirstUsableLBA, GptHeader->LastUsableLBA);
 									UINT32 PartitionEntrySize = GptHeader->SizeOfPartitionEntry * GptHeader->NumberOfPartitionEntries;
 									VOID *PartitionEntries = AllocatePool(PartitionEntrySize);
 									Print(L"Disk GUID: {%g} Number of Partitions: %u\n", &GptHeader->DiskGUID, GptHeader->NumberOfPartitionEntries);
