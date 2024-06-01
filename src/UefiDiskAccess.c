@@ -36,6 +36,15 @@ CHAR16 BlockUntilKeyStroke(IN CHAR16 Unicode)
 	return InKey.UnicodeChar;
 }
 
+CHAR16 BlockUntilAnyKeyStroke()
+{
+	EFI_INPUT_KEY InKey;
+	UINTN fi = 0;
+	gBS->WaitForEvent(1, &StdIn->WaitForKey, &fi);
+	StdIn->ReadKeyStroke(StdIn, &InKey);
+	return InKey.UnicodeChar;
+}
+
 INTN EfiCompareGuid(EFI_GUID *Guid1, EFI_GUID *Guid2)
 {
 	if (Guid1->Data1 > Guid2->Data1)
@@ -345,8 +354,8 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 			EnumAllDiskPartitions();
 			FreePool(DiskDevices);
 		}
-		Print(L"Press Enter key to continue...\r\n");
-		BlockUntilKeyStroke(L'\r');
+		Print(L"Press Any key to continue...\r\n");
+		BlockUntilAnyKeyStroke(L'\r');
 	}
 	return STATUS;
 }
