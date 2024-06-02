@@ -354,7 +354,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 			EnumAllDiskPartitions();
 			FreePool(DiskDevices);
 		}
-		Print(L"Press Any key to continue...\r\n");
+		Print(L"Press any key to continue...\r\n");
 		BlockUntilAnyKeyStroke(L'\r');
 	}
 	return STATUS;
