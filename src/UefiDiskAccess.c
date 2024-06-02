@@ -355,7 +355,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 			FreePool(DiskDevices);
 		}
 		Print(L"Press any key on the keyboard to continue...\r\n");
-		BlockUntilAnyKeyStroke(L'\r');
+		BlockUntilAnyKeyStroke();
 	}
 	return STATUS;
 }
