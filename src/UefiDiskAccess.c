@@ -151,7 +151,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 									Print(L"GPT Header Detected! First usable LBA: %u. Last usable LBA: %u.\n", GptHeader->FirstUsableLBA, GptHeader->LastUsableLBA);
 									UINT32 PartitionEntrySize = GptHeader->SizeOfPartitionEntry * GptHeader->NumberOfPartitionEntries;
 									VOID *PartitionEntries = AllocatePool(PartitionEntrySize);
-									Print(L"Disk GUID: {%g} Number of Partitions: %u\n", &GptHeader->DiskGUID, GptHeader->NumberOfPartitionEntries);
+									Print(L"Disk GUID: {%g} Max number of partitions: %u\n", &GptHeader->DiskGUID, GptHeader->NumberOfPartitionEntries);
 									if (PartitionEntries)
 									{
 										STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, GptHeader->PartitionEntryLBA, PartitionEntrySize, PartitionEntries);
@@ -174,10 +174,6 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 															{
 																Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", j, k, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
 																break;
-															}
-															if (k == NumberOfDiskDevices - 1)
-															{
-																Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", j, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
 															}
 														}
 													}
@@ -242,10 +238,13 @@ void EnumAllDiskPartitions()
 		// Skip absent media and partition media.
 		if (DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
 		{
-			CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
+			//CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
 			Print(L"=============================================================================\r\n");
-			Print(L"Part Info of Block Device %u Path: %s\n", i, DiskDevicePath);
-			FreePool(DiskDevicePath);
+			Print(L"Part Info of Block Device %u Path: %s\n", i, ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE));
+			Print(L"Part Info of Block Device %u Path: %s\n", i, ConvertDevicePathToText(DiskDevices[i].DevicePath, TRUE, FALSE));
+			Print(L"Part Info of Block Device %u Path: %s\n", i, ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, TRUE));
+			Print(L"Part Info of Block Device %u Path: %s\n", i, ConvertDevicePathToText(DiskDevices[i].DevicePath, TRUE, TRUE));
+			//FreePool(DiskDevicePath);
 			Print(L"MBR Last LBA: %u.\n", DiskDevices[i].BlockIo->Media->LastBlock);
 			EnumDiskPartitions(DiskDevices[i].BlockIo);
 		}
