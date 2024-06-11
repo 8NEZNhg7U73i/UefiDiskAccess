@@ -238,9 +238,12 @@ void EnumAllDiskPartitions()
 		// Skip absent media and partition media.
 		if (DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
 		{
-			CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
+			//CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
 			Print(L"=============================================================================\r\n");
-			Print(L"Part Info of Block Device %u Path: %s\n", i, DiskDevicePath);
+			Print(L"Part Info of Block Device %u Path: %s\n", i, ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE));
+			Print(L"Part Info of Block Device %u Path: %s\n", i, ConvertDevicePathToText(DiskDevices[i].DevicePath, TRUE, FALSE));
+			Print(L"Part Info of Block Device %u Path: %s\n", i, ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, TRUE));
+			Print(L"Part Info of Block Device %u Path: %s\n", i, ConvertDevicePathToText(DiskDevices[i].DevicePath, TRUE, TRUE));
 			FreePool(DiskDevicePath);
 			Print(L"MBR Last LBA: %u.\n", DiskDevices[i].BlockIo->Media->LastBlock);
 			EnumDiskPartitions(DiskDevices[i].BlockIo);
