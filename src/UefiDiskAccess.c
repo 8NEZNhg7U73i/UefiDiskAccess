@@ -175,7 +175,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 																Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", j, k, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
 																break;
 															}
-															if (k == NumberOfDiskDevices - 1)
+															else 
 															{
 																Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", j, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
 															}
@@ -251,6 +251,25 @@ void EnumAllDiskPartitions()
 		}
 	}
 	Print(L"=============================================================================\r\n");
+}
+
+void EnmuAllLogicalPartitions(IN CHAR16 *DiskDevicePath, OUT BOOLEAN IsParttition)
+{
+	EFI_STATUS Status;
+	
+	for (UINTN i = 0; i < NumberOfDiskDevices; i++)
+	{
+		// Skip absent media and partition media.
+		if (DiskDevices[i].BlockIo->Media->MediaPresent && DiskDevices[i].BlockIo->Media->LogicalPartition)
+		{
+			CHAR16 *PartitionDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);	
+			Status = StrnCmp(DiskDevicePath, PartitionDevicePath, Strlen(DiskDevicePath) > Strlen(PartitionDevicePath) ? Strlen(PartitionDevicePath) : Strlen(DiskDevicePath));
+			if (Status == EFI_SUCCESS)
+			{
+				
+			}
+		}
+	}
 }
 
 EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID *GptSignature)
