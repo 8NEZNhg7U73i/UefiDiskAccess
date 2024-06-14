@@ -145,7 +145,9 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 							if (STATUS == EFI_SUCCESS)
 							{
 								if (GptHeader->Header.Signature != EFI_PTAB_HEADER_ID)
+								{
 									Print(L"Improper GPT Header Signature!");
+								}
 								else
 								{
 									Print(L"GPT Header Detected! First usable LBA: %u. Last usable LBA: %u.\n", GptHeader->FirstUsableLBA, GptHeader->LastUsableLBA);
