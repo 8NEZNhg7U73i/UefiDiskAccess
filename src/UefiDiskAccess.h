@@ -23,6 +23,7 @@
 #include <Protocol/SimpleFileSystem.h>
 #include <Protocol/ShellParameters.h>
 #include <Protocol/BlockIo.h>
+#include <Protocol/PartitionInfo.h>
 
 #define LimitKiB	(1<<10)
 #define LimitMiB	(1<<20)
@@ -32,6 +33,7 @@ typedef struct _DISK_DEVICE_OBJECT
 {
 	EFI_DEVICE_PATH_PROTOCOL* DevicePath;
 	EFI_BLOCK_IO_PROTOCOL* BlockIo;
+  EFI_PARTITION_INFO_PROTOCOL* PartInfo;
 }DISK_DEVICE_OBJECT;
 
 #define EFI_PART_TYPE_BASIC_DATA_PART_GUID                                         \
@@ -81,6 +83,9 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL* DevicePath, EFI_GUID
 UINTN NumberOfDiskDevices=0;
 DISK_DEVICE_OBJECT *DiskDevices=NULL;
 DISK_DEVICE_OBJECT *CurrentDiskDevice=NULL;
+UINTN NumberOfPartitions=0;
+DISK_DEVICE_OBJECT *Partitions=NULL;
+DISK_DEVICE_OBJECT *CurrentPartitions=NULL;
 
 extern EFI_BOOT_SERVICES *gBS;
 extern EFI_SYSTEM_TABLE *gST;
