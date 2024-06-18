@@ -169,7 +169,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
 													for (UINT32 k = 0; k < NumberOfPartitions; k++)
 													{
-														if (DiskDevices[k].PartInfo && (DiskDevices[k].PartInfo)->Type)
+														if (DiskDevices[k].DevicePath)
 														{
 															/*
 															STATUS = FindGptSignature(DiskDevices[k].DevicePath, &PartitionEntry->UniquePartitionGUID);
