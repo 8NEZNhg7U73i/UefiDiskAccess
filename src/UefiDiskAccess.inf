@@ -27,7 +27,7 @@
   UefiBootServicesTableLib
   UefiRuntimeServicesTableLib
   ShellLib
-  PartitionDxe
+  PartitionInfoLib
   
 
 [BuildOptions.IA32]
