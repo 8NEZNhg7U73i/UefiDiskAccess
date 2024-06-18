@@ -66,8 +66,6 @@ NOOPT_VS2017_X64_DLINK_FLAGS    == /NOLOGO /NODEFAULTLIB /IGNORE:4001 /Machine:X
 
 [Protocols]
   gEfiBlockIoProtocolGuid
-  gEfiBlockIo2ProtocolGuid
   gEfiDevicePathProtocolGuid
-  gEfiPartitionInfoProtocolGuid                 ## BY_START
-  gEfiDiskIoProtocolGuid                        ## TO_START
-  gEfiDiskIo2ProtocolGuid                       ## TO_START
+  gEfiPartitionInfoProtocolGuid
+  gEfiDiskIoProtocolGuid
