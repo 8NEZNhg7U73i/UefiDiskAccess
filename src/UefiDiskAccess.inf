@@ -64,3 +64,10 @@ DEBUG_VS2017_X64_DLINK_FLAGS    == /NOLOGO /NODEFAULTLIB /IGNORE:4001 /Machine:X
 RELEASE_VS2017_X64_DLINK_FLAGS  == /NOLOGO /NODEFAULTLIB /IGNORE:4001 /IGNORE:4254 /Machine:X64 /LTCG /ENTRY:$(IMAGE_ENTRY_POINT) /SUBSYSTEM:EFI_APPLICATION /OPT:REF 
 NOOPT_VS2017_X64_DLINK_FLAGS    == /NOLOGO /NODEFAULTLIB /IGNORE:4001 /Machine:X64 /LTCG /ENTRY:$(IMAGE_ENTRY_POINT) /SUBSYSTEM:EFI_APPLICATION /DEBUG
 
+[Protocols]
+  gEfiBlockIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
+  gEfiDevicePathProtocolGuid
+  gEfiPartitionInfoProtocolGuid                 ## BY_START
+  gEfiDiskIoProtocolGuid                        ## TO_START
+  gEfiDiskIo2ProtocolGuid                       ## TO_START
