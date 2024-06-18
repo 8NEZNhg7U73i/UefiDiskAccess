@@ -215,7 +215,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 							}
 							else
 							{
-								Print(L"Failed to read GPT Header! Status=0x%p\n", STATUS);
+								Print(L"Failed to read GPT Header! Status=0x%r\n", STATUS);
 							}
 							FreePool(GptHeader);
 						}
