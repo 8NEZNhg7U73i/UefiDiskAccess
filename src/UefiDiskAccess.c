@@ -167,16 +167,20 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 													DisplaySize(MultU64x32(PartitionEntry->StartingLBA, BlockIoProtocol->Media->BlockSize), ScaledStart, sizeof(ScaledStart));
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA, BlockIoProtocol->Media->BlockSize), ScaledEnd, sizeof(ScaledEnd));
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
-													for (UINT32 k = 0; k < NumberOfDiskDevices; k++)
+													for (UINT32 k = 0; k < NumberOfPartitions; k++)
 													{
-														if (DiskDevices[k].DevicePath)
+														if (DiskDevices[k].PartInfo && (DiskDevices[k].PartInfo)->Type)
 														{
+															/*
 															STATUS = FindGptSignature(DiskDevices[k].DevicePath, &PartitionEntry->UniquePartitionGUID);
 															if (STATUS == EFI_SUCCESS)
 															{
 																Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", j, k, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
 																break;
 															}
+															*/
+
+															STATUS = CompareMem()
 															else 
 															{
 																Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", j, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
@@ -250,30 +254,94 @@ void EnumAllDiskPartitions()
 			Print(L"=============================================================================\r\n");
 			Print(L"Part Info of Block Device %u Path: %s\n", i, DiskDevicePath);
 			FreePool(DiskDevicePath);
-			Print(L"MBR Last LBA: %u.\n", DiskDevices[i].BlockIo->Media->LastBlock);
+			Print(L"Disk Last LBA: %u.\n", DiskDevices[i].BlockIo->Media->LastBlock);
 			EnumDiskPartitions(DiskDevices[i].BlockIo);
 		}
 	}
 	Print(L"=============================================================================\r\n");
 }
 
-void EnmuAllLogicalPartitions(IN CHAR16 *DiskDevicePath, OUT BOOLEAN IsParttition)
+void FindLogicalPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 {
 	EFI_STATUS Status;
-	
+	HARDDRIVE_DEVICE_PATH *DevicePathMask;
+	UINT32 PartitionNumber;
+	UINT64 PartitionSize;
+	UINT64 PartitonSize;
+	UINT64 PartitionStart;
+	UINT8 PartitionType;
+	UINT8 MBRTYPE;
+	EFI_GUID GPTSignature;
+
+  ///
+  /// Type of Disk Signature: (Unused values reserved).
+  /// 0x00 - No Disk Signature.
+  /// 0x01 - 32-bit signature from address 0x1b8 of the type 0x01 MBR.
+  /// 0x02 - GUID signature.
+  ///
 	for (UINTN i = 0; i < NumberOfDiskDevices; i++)
 	{
 		// Skip absent media and partition media.
 		if (DiskDevices[i].BlockIo->Media->MediaPresent && DiskDevices[i].BlockIo->Media->LogicalPartition)
 		{
-			CHAR16 *PartitionDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);	
+			DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
+			gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
+			while (!IsDevicePathEnd(DevicePath))
+			{
+				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DevicePath;
+				DevicePath = NextDevicePathNode(DevicePath);
+				if (DevicePathMask->Header.Type != MEDIA_DEVICE_PATH)
+				{
+					continue;
+				}
+			}
+			PartitionType = DevicePathMask->SignatureType;
+			PartitionNumber = DevicePathMask->PartitionNumber;
+			PartitionStart = DevicePathMask->PartitionStart;
+			PartitonSize = DevicePathMask->PartitionSize;
+
+			 if (PartitionType == SIGNATURE_TYPE_GUID)
+			 {
+					GPTSignature = (EFI_GUID *)&(DevicePathMask->Signature[0])
+			 }
+			 
+/*
+			CHAR16 *PartitionDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
+			CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
 			Status = StrnCmp(DiskDevicePath, PartitionDevicePath, Strlen(DiskDevicePath) > Strlen(PartitionDevicePath) ? Strlen(PartitionDevicePath) : Strlen(DiskDevicePath));
 			if (Status == EFI_SUCCESS)
 			{
-				
+				BlockIoprotocol = DiskDevices[i].BlockIo;
+				return EFI_SUCCESS;
 			}
+*/
 		}
 	}
+}
+
+EFI_STATUS InitializePartitionInformationProtocol()
+{
+	EFI_STATUS STATUS;
+	UINTN BuffCount;
+	EFI_HANDLE *HandleBuffer = NULL;
+	STATUS = gBS->LocateHandleBuffer(Byprotocol, &gEfiPartitionInfoProtocolGuid, NULL, &BuffCount, &HandleBuffer);
+	if (STATUS == EFI_SUCCESS)
+	{
+		Partitions = AllocateZeroPool(sizeof(DISK_DEVICE_OBJECT) * BuffCount);
+		if (Partitions)
+		{
+			NumberOfPartitions = BuffCount;
+		}
+		else
+		{
+			STATUS = EFI_OUT_OF_RESOURCES;
+			Print(L"Failed to build list of Partition Devices!\r\n");
+		}
+		FreePool(HandleBuffer);
+	}
+	else
+		Print(L"Failed to locate Partition Information handles! Status=%r\n", STATUS);
+	return STATUS;
 }
 
 EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID *GptSignature)
@@ -308,9 +376,10 @@ EFI_STATUS InitializeDiskIoProtocol()
 {
 	UINTN BuffCount = 0;
 	EFI_HANDLE *HandleBuffer = NULL;
+	EFI_STATUS STATUS;
 	// CONST CHAR16 *CurrentName;
 	// Locate all devices that support Disk I/O Protocol.
-	EFI_STATUS STATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BuffCount, &HandleBuffer);
+	STATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BuffCount, &HandleBuffer);
 	if (STATUS == EFI_SUCCESS)
 	{
 		DiskDevices = AllocateZeroPool(sizeof(DISK_DEVICE_OBJECT) * BuffCount);
@@ -321,6 +390,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 			{
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
 				gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
+				gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
 				if (HandleBuffer[i] == CurrentImage)
 				{
 					CHAR16 *DevPath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
@@ -344,7 +414,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 		FreePool(HandleBuffer);
 	}
 	else
-		Print(L"Failed to locate Disk I/O handles! Status=0x%p\n", STATUS);
+		Print(L"Failed to locate Disk I/O handles! Status=%r\n", STATUS);
 	return STATUS;
 }
 
