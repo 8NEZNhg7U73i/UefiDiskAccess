@@ -167,7 +167,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 													DisplaySize(MultU64x32(PartitionEntry->StartingLBA, BlockIoProtocol->Media->BlockSize), ScaledStart, sizeof(ScaledStart));
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA, BlockIoProtocol->Media->BlockSize), ScaledEnd, sizeof(ScaledEnd));
 													DisplaySize(MultU64x32(PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
-													for (UINT32 k = 0; k < NumberOfPartitions; k++)
+													for (UINT32 k = 0; k < NumberOfDiskDevices; k++)
 													{
 														if (DiskDevices[k].DevicePath)
 														{
