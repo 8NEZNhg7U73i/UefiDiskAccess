@@ -306,8 +306,10 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TAB
 			{
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
+				Print(L"HandleBuffer: %0X\n", HandleBuffer[i]);
 				Print(L"STATUS: %r\n", STATUS);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
+				Print(L"HandleBuffer: %0X\n", HandleBuffer[i]);
 				Print(L"STATUS: %r\n", STATUS);
 				if (HandleBuffer[i] == CurrentImage)
 				{
@@ -321,10 +323,6 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TAB
 						FreePool(DevPath);
 						// FreePool(MapName);
 					}
-				}
-				else
-				{
-					Print(L"HandleBuffer: %0X\n", HandleBuffer[i]);
 				}
 			}
 		}
