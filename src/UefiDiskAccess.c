@@ -335,10 +335,12 @@ EFI_STATUS InitializeDiskIoProtocol()
 
 EFI_STATUS EFIAPI EfiInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 {
+	/*
 	UefiBootServicesTableLibConstructor(ImageHandle, SystemTable);
 	UefiRuntimeServicesTableLibConstructor(ImageHandle, SystemTable);
 	UefiLibConstructor(ImageHandle, SystemTable);
 	DevicePathLibConstructor(ImageHandle, SystemTable);
+	*/
 	return 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 }
 
