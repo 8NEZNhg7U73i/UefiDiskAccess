@@ -345,7 +345,7 @@ EFI_STATUS EFIAPI EfiInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *
 	UefiRuntimeServicesTableLibConstructor(ImageHandle, SystemTable);
 	UefiLibConstructor(ImageHandle, SystemTable);
 	DevicePathLibConstructor(ImageHandle, SystemTable);
-	return EFI_SUCCESS
+	return EFI_SUCCESS;
 }
 
 EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
