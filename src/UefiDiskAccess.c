@@ -30,8 +30,8 @@ CHAR16 BlockUntilKeyStroke(IN CHAR16 Unicode)
 	do
 	{
 		UINTN fi = 0;
-		gBS->WaitForEvent(1, &StdIn->WaitForKey, &fi);
-		StdIn->ReadKeyStroke(StdIn, &InKey);
+		gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &fi);
+		gST->ConIn->ReadKeyStroke(gST->ConIn, &InKey);
 	} while (InKey.UnicodeChar != Unicode && Unicode);
 	return InKey.UnicodeChar;
 }
@@ -40,8 +40,8 @@ CHAR16 BlockUntilAnyKeyStroke()
 {
 	EFI_INPUT_KEY InKey;
 	UINTN fi = 0;
-	gBS->WaitForEvent(1, &StdIn->WaitForKey, &fi);
-	StdIn->ReadKeyStroke(StdIn, &InKey);
+	gBS->WaitForEvent(1, &gST->ConIn->WaitForKey, &fi);
+	gST->ConIn->ReadKeyStroke(gST->ConIn, &InKey);
 	return InKey.UnicodeChar;
 }
 
@@ -86,10 +86,10 @@ EFI_STATUS EnablePageBreak()
 void SetConsoleModeToMaximumRows()
 {
 	UINTN MaxHgt = 0, OptIndex;
-	for (UINTN i = 0; i < StdOut->Mode->MaxMode; i++)
+	for (UINTN i = 0; i < gST->ConOut->Mode->MaxMode; i++)
 	{
 		UINTN Col, Row;
-		EFI_STATUS STATUS = StdOut->QueryMode(StdOut, i, &Col, &Row);
+		EFI_STATUS STATUS = gST->ConOut->QueryMode(gST->ConOut, i, &Col, &Row);
 		if (STATUS == EFI_SUCCESS)
 		{
 			if (Row > MaxHgt)
@@ -99,9 +99,9 @@ void SetConsoleModeToMaximumRows()
 			}
 		}
 	}
-	StdOut->SetMode(StdOut, OptIndex);
-	StdOut->ClearScreen(StdOut);
-	StdOut->SetAttribute(StdOut, EFI_BACKGROUND_BLACK | EFI_LIGHTGRAY);
+	gST->ConOut->SetMode(gST->ConOut, OptIndex);
+	gST->ConOut->ClearScreen(gST->ConOut);
+	gST->ConOut->SetAttribute(gST->ConOut, EFI_BACKGROUND_BLACK | EFI_LIGHTGRAY);
 }
 
 void DisplaySize(IN UINT64 Size, OUT CHAR16 *Buffer, IN UINTN Limit)
@@ -339,8 +339,6 @@ EFI_STATUS EFIAPI EfiInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *
 	UefiRuntimeServicesTableLibConstructor(ImageHandle, SystemTable);
 	UefiLibConstructor(ImageHandle, SystemTable);
 	DevicePathLibConstructor(ImageHandle, SystemTable);
-	StdIn = SystemTable->ConIn;
-	StdOut = SystemTable->ConOut;
 	return gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 }
 
