@@ -286,9 +286,8 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID
 	return EFI_NOT_FOUND;
 }
 
-EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
+EFI_STATUS InitializeDiskIoProtocol()
 {
-	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 	Print(L"%0X\n", CurrentImage);
 	UINTN BuffCount = 0;
 	EFI_HANDLE *HandleBuffer = NULL;
@@ -306,11 +305,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TAB
 			{
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
-				Print(L"HandleBuffer: %0X\n", HandleBuffer[i]);
-				Print(L"STATUS: %r\n", STATUS);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
-				Print(L"HandleBuffer: %0X\n", HandleBuffer[i]);
-				Print(L"STATUS: %r\n", STATUS);
 				if (HandleBuffer[i] == CurrentImage->DeviceHandle)
 				{
 					CHAR16 *DevPath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
@@ -344,7 +339,7 @@ EFI_STATUS EFIAPI EfiInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *
 	UefiRuntimeServicesTableLibConstructor(ImageHandle, SystemTable);
 	UefiLibConstructor(ImageHandle, SystemTable);
 	DevicePathLibConstructor(ImageHandle, SystemTable);
-	return EFI_SUCCESS;
+	return 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 }
 
 EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
@@ -359,7 +354,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 		Print(L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
 		Print(L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
 		Print(L"UEFI Firmware Vendor: %s Revision: %d.%d\n", SystemTable->FirmwareVendor, RevHi, RevLo);
-		STATUS = InitializeDiskIoProtocol(ImageHandle, SystemTable);
+		STATUS = InitializeDiskIoProtocol();
 		if (STATUS == EFI_SUCCESS)
 		{
 			EnumAllDiskPartitions();
