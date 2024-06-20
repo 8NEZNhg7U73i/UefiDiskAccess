@@ -286,8 +286,10 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID
 	return EFI_NOT_FOUND;
 }
 
-EFI_STATUS InitializeDiskIoProtocol()
+EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 {
+	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
+	Print(L"%0X\n", CurrentImage);
 	UINTN BuffCount = 0;
 	EFI_HANDLE *HandleBuffer = NULL;
 	EFI_STATUS STATUS;
@@ -319,6 +321,10 @@ EFI_STATUS InitializeDiskIoProtocol()
 						// FreePool(MapName);
 					}
 				}
+				else
+				{
+					Print(L"HandleBuffer: %0X\n", HandleBuffer[i]);
+				}
 			}
 		}
 		else
@@ -339,7 +345,7 @@ EFI_STATUS EFIAPI EfiInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *
 	UefiRuntimeServicesTableLibConstructor(ImageHandle, SystemTable);
 	UefiLibConstructor(ImageHandle, SystemTable);
 	DevicePathLibConstructor(ImageHandle, SystemTable);
-	return gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
+	return EFI_SUCCESS
 }
 
 EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
@@ -354,7 +360,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 		Print(L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
 		Print(L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
 		Print(L"UEFI Firmware Vendor: %s Revision: %d.%d\n", SystemTable->FirmwareVendor, RevHi, RevLo);
-		STATUS = InitializeDiskIoProtocol();
+		STATUS = InitializeDiskIoProtocol(ImageHandle, SystemTable);
 		if (STATUS == EFI_SUCCESS)
 		{
 			EnumAllDiskPartitions();
