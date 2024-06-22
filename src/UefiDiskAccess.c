@@ -288,7 +288,7 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID
 
 EFI_STATUS InitializeDiskIoProtocol()
 {
-	Print(L"%0X\n", CurrentImage);
+	//Print(L"%0X\n", CurrentImage);
 	UINTN BuffCount = 0;
 	EFI_HANDLE *HandleBuffer = NULL;
 	EFI_STATUS STATUS;
@@ -307,6 +307,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
+				Print (L"STATUS: %r\n", STATUS);
 				/*
 				if (HandleBuffer[i] == CurrentImage->DeviceHandle)
 				{
