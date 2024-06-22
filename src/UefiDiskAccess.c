@@ -333,7 +333,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 	}
 	else
 	{
-		Print(L"Failed to locate Disk I/O handles! Status=%r\n", STATUS);
+		Print(L"Failed to locate Disk I/O handles! Status=%r\n", DISKSTATUS);
 	}
 	return DISKSTATUS;
 }
