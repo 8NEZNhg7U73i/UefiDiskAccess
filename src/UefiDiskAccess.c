@@ -332,7 +332,9 @@ EFI_STATUS InitializeDiskIoProtocol()
 		FreePool(HandleBuffer);
 	}
 	else
+	{
 		Print(L"Failed to locate Disk I/O handles! Status=%r\n", STATUS);
+	}
 	return STATUS;
 }
 
