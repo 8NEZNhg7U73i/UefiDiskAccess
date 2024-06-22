@@ -320,8 +320,8 @@ EFI_STATUS InitializeDiskIoProtocol()
 						FreePool(DevPath);
 						// FreePool(MapName);
 					}
-				*/
 				}
+				*/
 			}
 		}
 		else
