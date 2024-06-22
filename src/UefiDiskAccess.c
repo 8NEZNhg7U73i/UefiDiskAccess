@@ -326,7 +326,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 		}
 		else
 		{
-			STATUS = EFI_OUT_OF_RESOURCES;
+			DISKSTATUS = EFI_OUT_OF_RESOURCES;
 			Print(L"Failed to build list of Disk Devices!\r\n");
 		}
 		FreePool(HandleBuffer);
@@ -335,7 +335,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 	{
 		Print(L"Failed to locate Disk I/O handles! Status=%r\n", STATUS);
 	}
-	return STATUS;
+	return DISKSTATUS;
 }
 
 EFI_STATUS EFIAPI EfiInitialize(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
