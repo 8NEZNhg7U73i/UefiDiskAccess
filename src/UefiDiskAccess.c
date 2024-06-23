@@ -365,7 +365,7 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID
 	return EFI_NOT_FOUND;
 }
 
-EFI_STATUS InitializeDiskIoProtocol()
+EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 {
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage)
 	//Print(L"%0X\n", CurrentImage);
@@ -446,7 +446,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 		Print(L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
 		Print(L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
 		Print(L"UEFI Firmware Vendor: %s Revision: %d.%d\n", SystemTable->FirmwareVendor, RevHi, RevLo);
-		STATUS = InitializeDiskIoProtocol();
+		STATUS = InitializeDiskIoProtocol(ImageHandle);
 		if (STATUS == EFI_SUCCESS)
 		{
 			EnumAllDiskPartitions();
