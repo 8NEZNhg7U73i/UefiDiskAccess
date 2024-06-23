@@ -115,7 +115,7 @@ void SetGraphicsMode()
 		for (i = 0; i < MaxMode; i++)
 		{
 			STATUS = GraphOut->QueryMode(GraphOut, i, &SizeOfInfo, &GraphInfo);
-			Print(L"Graphics %d, Mode %d:[%d,%d]\n", GraphCount, GraphInfo->PixelFormat, GraphInfo->HorizontalResolution, GraphInfo->VerticalResolution);
+			Print(L"Graphics %d, Mode %d:[%d,%d]\n", i, GraphInfo->PixelFormat, GraphInfo->HorizontalResolution, GraphInfo->VerticalResolution);
 			if (GraphInfo->HorizontalResolution > MaxHeight)
 			{
 				MaxHeight = GraphInfo->HorizontalResolution;
@@ -124,8 +124,8 @@ void SetGraphicsMode()
 			{
 				MaxRow = GraphInfo->VerticalResolution;
 			}
-			Print(L"MaxHeight:%d, MaxRow:%d\n",MaxHeight, MaxRow);
 		}
+		Print(L"MaxHeight:%d, MaxRow:%d\n",MaxHeight, MaxRow);
 	}
 }
 
