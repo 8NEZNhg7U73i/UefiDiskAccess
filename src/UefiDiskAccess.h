@@ -25,7 +25,7 @@
 #include <Protocol/BlockIo.h>
 #include <Protocol/PartitionInfo.h>
 
-#include 'Partition.h'
+#include "Partition.h"
 
 #define LimitKiB	(1<<10)
 #define LimitMiB	(1<<20)
