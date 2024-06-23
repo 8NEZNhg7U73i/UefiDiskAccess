@@ -11,6 +11,7 @@
   Partition.h
   Gpt.c
   Mbr.c
+  Partition.c
 
 [Packages]
   MdePkg/MdePkg.dec
