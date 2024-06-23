@@ -110,7 +110,7 @@ void SetGraphicsMode()
 		StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 		Print(L"Graphics %d Device Path:%s", StrPath);
 		MaxMode = GraphOut->Mode->MaxMode;
-		CurrentMode = GrapthOut->Mode->Mode;
+		CurrentMode = GraphOut->Mode->Mode;
 		Print(L"MaxMode:%d, Mode:%d\n", MaxMode, CurrentMode);
 		for (i = 0; i < MaxMode; i++)
 		{
