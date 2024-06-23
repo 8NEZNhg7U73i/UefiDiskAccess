@@ -1331,7 +1331,7 @@ InitializePartition (
              &gPartitionComponentName2
              );
   ASSERT_EFI_ERROR (Status);
-
+  Print(L"EfiLibInstallDriverBindingComponentName2: %r\n", Status);
   Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount , &Handle);
   Print(L"LocateHandleBuffer: %d\n", HandleCount);
   for (CurrentHandle = 0; CurrentHandle < HandleCount; CurrentHandle++)
@@ -1345,7 +1345,7 @@ InitializePartition (
       PartitionInfo = AllocateZeroPool(sizeof(EFI_PARTITION_INFO_PROTOCOL));
       Status = gBS->InstallMultipleProtocolInterfaces(Handle[CurrentHandle], &gEfiPartitionInfoProtocolGuid, PartitionInfo, NULL, NULL);
       //Status = gBS->HandleProtocol(Handle[CurrentHandle], &gEfiPartitionInfoProtocolGuid, &PartitionInfo);
-      Print(L"Status: %r\n", Status);
+      Print(L"InstallMultipleProtocolInterfaces: %r\n", Status);
     }
   }
   return EFI_SUCCESS;
