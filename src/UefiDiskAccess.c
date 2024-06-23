@@ -144,7 +144,7 @@ void SetConsoleMode()
 	MaxMode = gST->ConOut->Mode->MaxMode;
 	for (CurrentMode = 0; CurrentMode < gST->ConOut->Mode->MaxMode; CurrentMode++)
 	{
-		STATUS = gST-ConOut->QueryMode(gST->ConOut, i, &Column, &Row);
+		STATUS = gST->ConOut->QueryMode(gST->ConOut, i, &Column, &Row);
 		if (STATUS == EFI_SUCCESS)
 		{
 			Print(L"Column:%d, Row:%d", Column, Row);
