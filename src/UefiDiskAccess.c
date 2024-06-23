@@ -287,7 +287,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 							}
 							else
 							{
-								Print(L"Failed to read GPT Header! Status=0x%r\n", STATUS);
+								Print(L"Failed to read GPT Header! STATUS=0x%r\n", STATUS);
 							}
 							FreePool(GptHeader);
 						}
@@ -418,7 +418,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 	}
 	else
 	{
-		Print(L"Failed to locate Disk I/O handles! Status=%r\n", DISKSTATUS);
+		Print(L"Failed to locate Disk I/O handles! STATUS=%r\n", DISKSTATUS);
 	}
 	return DISKSTATUS;
 }
