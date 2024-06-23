@@ -83,6 +83,51 @@ EFI_STATUS EnablePageBreak()
 	return EFI_SUCCESS;
 }
 
+void SetGraphicsMode()
+{
+	UINT32 MaxHeight = 0;
+	UINT32 MaxRow = 0;
+	UINTN OptIndex;
+	EFI_STATUS STATUS;
+	EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphOut;
+	EFI_HANDLE *GraphHandles;
+	UINTN SizeOfInfo;
+	UINTN GraphCount;
+	UINTN MaxMode;
+	UINTN CurrentMode;
+	EFI_DEVICE_PATH *DevicePath;
+	CHAR16 *StrPath;
+	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *GraphInfo;
+	EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *GraphMode;
+	STATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &GraphCount, &GraphHandles);
+	Print(L"GraphCount:%d\n", GraphCount);
+	for (i = 0; i < GraphCount; i++)
+	{
+		Print(L"i:%d\n", i);
+		STATUS = gBS->HandleProtocol(GraphHandles[i], &gEfiGraphicsOutputProtocolGuid, &GraphOut);
+		DevicePath = DevicePathFromHandle(GraphHandles[i]);
+		StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
+		Print(L"Graphics %d Device Path:%s", StrPath);
+		MaxMode = GraphOut->Mode->MaxMode;
+		CurrentMode = GrapthOut->Mode->Mode;
+		Print(L"MaxMode:%d, Mode:%d\n", MaxMode, CurrentMode);
+		for (i = 0; i < MaxMode; i++)
+		{
+			STATUS = GraphOut->QueryMode(GraphOut, i, &SizeOfInfo, &GraphInfo);
+			Print(L"Graphics %d, Mode %d:[%d,%d]\n", GraphCount, GraphInfo->Mode, GraphInfo->HorizontalResolution, GraphInfo->VerticalResolution);
+			if (GraphInfo->HorizontalResolution > MaxHeight)
+			{
+				MaxHeight = GraphInfo->HorizontalResolution;
+			}
+			if (GraphInfo->VerticalResolution > MaxRow)
+			{
+				MaxRow = GraphInfo->VerticalResolution;
+			}
+			Print(L"MaxHeight:%d, MaxRow:%d\n",MaxHeight, MaxRow);
+		}
+	}
+}
+
 void SetConsoleModeToMaximumRows()
 {
 	UINTN MaxHgt = 0, OptIndex;
@@ -358,6 +403,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 		UINT16 RevHi = (UINT16)(SystemTable->Hdr.Revision >> 16);
 		UINT16 RevLo = (UINT16)(SystemTable->Hdr.Revision & 0xFFFF);
 		SetConsoleModeToMaximumRows();
+		SetGraphicsMode();
 		EnablePageBreak();
 		Print(L"UefiDiskAccess Demo - Simple Demo of Accessing Disks in UEFI\r\n");
 		Print(L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
