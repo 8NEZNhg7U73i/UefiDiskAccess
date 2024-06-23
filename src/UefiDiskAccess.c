@@ -102,7 +102,7 @@ void SetGraphicsMode()
 	//EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *GraphMode;
 	STATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &GraphCount, &GraphHandles);
 	Print(L"GraphCount:%d\n", GraphCount);
-	for (i = 0; i < GraphCount; i++)
+	for (i = 0; i >= GraphCount; i++)
 	{
 		Print(L"i:%d\n", i);
 		STATUS = gBS->HandleProtocol(GraphHandles[i], &gEfiGraphicsOutputProtocolGuid, &GraphOut);
