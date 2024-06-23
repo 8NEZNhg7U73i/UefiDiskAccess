@@ -93,29 +93,30 @@ void SetGraphicsMode()
 	EFI_HANDLE *GraphHandles;
 	UINTN SizeOfInfo;
 	UINTN GraphCount;
-	UINTN MaxMode;
-	UINTN CurrentMode;
+	UINTN CurrentGraphCount;
+	UINT32 MaxMode;
+	UINT32 CurrentMode;
 	EFI_DEVICE_PATH *DevicePath;
 	CHAR16 *StrPath;
-	UINTN i;
+	//UINTN i;
 	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *GraphInfo;
 	//EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *GraphMode;
 	STATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &GraphCount, &GraphHandles);
 	Print(L"GraphCount:%d\n", GraphCount);
-	for (i = 0; i >= GraphCount; i++)
+	for (CurrentGraphCount = 0; CurrentGraphCount < GraphCount; CurrentGraphCount++)
 	{
-		Print(L"i:%d\n", i);
-		STATUS = gBS->HandleProtocol(GraphHandles[i], &gEfiGraphicsOutputProtocolGuid, &GraphOut);
-		DevicePath = DevicePathFromHandle(GraphHandles[i]);
+		Print(L"CurrentGraphCount:%d\n", CurrentGraphCount);
+		STATUS = gBS->HandleProtocol(GraphHandles[CurrentGraphCount], &gEfiGraphicsOutputProtocolGuid, &GraphOut);
+		DevicePath = DevicePathFromHandle(GraphHandles[CurrentGraphCount]);
 		StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
-		Print(L"Graphics %d Device Path:%s\n", i, StrPath);
+		Print(L"Graphics %d Device Path:%s\n", CurrentGraphCount, StrPath);
 		MaxMode = GraphOut->Mode->MaxMode;
 		CurrentMode = GraphOut->Mode->Mode;
 		Print(L"MaxMode:%d, Mode:%d\n", MaxMode, CurrentMode);
-		for (i = 0; i < MaxMode; i++)
+		for (CurrentMode = 0; CurrentMode < MaxMode; CurrentMode++)
 		{
-			STATUS = GraphOut->QueryMode(GraphOut,(UINT32) i, &SizeOfInfo, &GraphInfo);
-			Print(L"Graphics Mode %d, PixelFormat %d:[%d,%d]\n", i, GraphInfo->PixelFormat, GraphInfo->HorizontalResolution, GraphInfo->VerticalResolution);
+			STATUS = GraphOut->QueryMode(GraphOut,(UINT32) CurrentMode, &SizeOfInfo, &GraphInfo);
+			Print(L"Graphics Mode %d, PixelFormat %d:[%d,%d]\n", CurrentMode, GraphInfo->PixelFormat, GraphInfo->HorizontalResolution, GraphInfo->VerticalResolution);
 			if (GraphInfo->HorizontalResolution > MaxHeight)
 			{
 				MaxHeight = GraphInfo->HorizontalResolution;
