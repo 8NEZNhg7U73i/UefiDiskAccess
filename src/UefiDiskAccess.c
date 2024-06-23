@@ -137,11 +137,8 @@ void SetConsoleMode()
 {
 	UINTN Row;
 	UINTN Column;
-	SIMPLE_TEXT_OUTPUT_MODE mode;
-	UINTN MaxMode;
 	UINTN CurrentMode;
 	EFI_STATUS STATUS;
-	MaxMode = gST->ConOut->Mode->MaxMode;
 	for (CurrentMode = 0; CurrentMode < gST->ConOut->Mode->MaxMode; CurrentMode++)
 	{
 		STATUS = gST->ConOut->QueryMode(gST->ConOut, i, &Column, &Row);
