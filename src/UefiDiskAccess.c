@@ -385,6 +385,10 @@ EFI_STATUS InitializeDiskIoProtocol()
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
+				if (STATUS == EFI_SUCCESS)
+				{
+					Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
+				}
 				Print (L"STATUS: %r\n", STATUS);
 				/*
 				if (HandleBuffer[i] == CurrentImage->DeviceHandle)
