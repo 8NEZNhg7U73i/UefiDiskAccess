@@ -8,6 +8,9 @@
 
 [Sources]
   UefiDiskAccess.c
+  Partition.h
+  Gpt.c
+  Mbr.c
 
 [Packages]
   MdePkg/MdePkg.dec
@@ -28,7 +31,12 @@
   UefiRuntimeServicesTableLib
   ShellLib
 
-  
+[Guids]
+  gEfiPartTypeUnusedGuid                        ## SOMETIMES_CONSUMES ## GUID
+  ## SOMETIMES_CONSUMES ## GUID
+  ## SOMETIMES_CONSUMES ## GUID # Install protocol
+  gEfiPartTypeSystemPartGuid
+
 
 [BuildOptions.IA32]
 RELEASE_VS2010x86_IA32_CC_FLAGS  = /FAcs /D_UEFI
@@ -69,3 +77,5 @@ NOOPT_VS2017_X64_DLINK_FLAGS    == /NOLOGO /NODEFAULTLIB /IGNORE:4001 /Machine:X
   gEfiDevicePathProtocolGuid
   gEfiPartitionInfoProtocolGuid
   gEfiDiskIoProtocolGuid
+  gEfiBlockIo2ProtocolGuid
+  gEfiDiskIo2ProtocolGuid
