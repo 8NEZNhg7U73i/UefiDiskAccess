@@ -97,7 +97,7 @@ void SetGraphicsMode()
 	UINTN CurrentMode;
 	EFI_DEVICE_PATH *DevicePath;
 	CHAR16 *StrPath;
-	UINTN32 i;
+	UINT32 i;
 	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *GraphInfo;
 	EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *GraphMode;
 	STATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &GraphCount, &GraphHandles);
