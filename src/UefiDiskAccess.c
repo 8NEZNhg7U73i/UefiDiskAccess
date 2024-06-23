@@ -108,7 +108,7 @@ void SetGraphicsMode()
 		STATUS = gBS->HandleProtocol(GraphHandles[i], &gEfiGraphicsOutputProtocolGuid, &GraphOut);
 		DevicePath = DevicePathFromHandle(GraphHandles[i]);
 		StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
-		Print(L"Graphics %d Device Path:%s", StrPath);
+		Print(L"Graphics %d Device Path:%s\n", i, StrPath);
 		MaxMode = GraphOut->Mode->MaxMode;
 		CurrentMode = GraphOut->Mode->Mode;
 		Print(L"MaxMode:%d, Mode:%d\n", MaxMode, CurrentMode);
