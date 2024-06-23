@@ -144,11 +144,11 @@ void SetConsoleMode()
 		STATUS = gST->ConOut->QueryMode(gST->ConOut, CurrentMode, &Column, &Row);
 		if (STATUS == EFI_SUCCESS)
 		{
-			Print(L"Column:%d, Row:%d", Column, Row);
+			Print(L"Column:%d, Row:%d\n", Column, Row);
 			if (Row >= SetRow && Column >= SetColumn)
 			{
 				//gST->ConOut->SetMode(gST->ConOut, i);
-				//gST->ConOut->ClearScreen(gST->ConOut);
+				gST->ConOut->ClearScreen(gST->ConOut);
 				gST->ConOut->SetAttribute(gST->ConOut, EFI_BACKGROUND_BLACK | EFI_LIGHTGRAY);
 				//break;
 			}
