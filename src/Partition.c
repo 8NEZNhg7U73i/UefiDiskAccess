@@ -100,7 +100,7 @@ PartitionDriverBindingSupported (
       }
     }
   }
-
+  Print(L"a\n");
   //
   // Open the IO Abstraction(s) needed to perform the supported test
   //
@@ -112,6 +112,7 @@ PartitionDriverBindingSupported (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
+  Print(L"gEfiDiskIoProtocolGuid: %r\n", Status);
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
@@ -139,6 +140,7 @@ PartitionDriverBindingSupported (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_BY_DRIVER
                   );
+  Print(L"gEfiDevicePathProtocolGuid: %r\n", Status);
   if (Status == EFI_ALREADY_STARTED) {
     return EFI_SUCCESS;
   }
@@ -168,6 +170,7 @@ PartitionDriverBindingSupported (
                   ControllerHandle,
                   EFI_OPEN_PROTOCOL_TEST_PROTOCOL
                   );
+  Print(L"gEfiBlockIoProtocolGuid: %r\n", Status);
 
   return Status;
 }
