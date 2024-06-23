@@ -87,7 +87,7 @@ void SetGraphicsMode()
 {
 	UINT32 MaxHeight = 0;
 	UINT32 MaxRow = 0;
-	UINTN OptIndex;
+	//UINTN OptIndex;
 	EFI_STATUS STATUS;
 	EFI_GRAPHICS_OUTPUT_PROTOCOL *GraphOut;
 	EFI_HANDLE *GraphHandles;
@@ -99,7 +99,7 @@ void SetGraphicsMode()
 	CHAR16 *StrPath;
 	UINT32 i;
 	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *GraphInfo;
-	EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *GraphMode;
+	//EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *GraphMode;
 	STATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &GraphCount, &GraphHandles);
 	Print(L"GraphCount:%d\n", GraphCount);
 	for (i = 0; i < GraphCount; i++)
