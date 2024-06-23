@@ -315,11 +315,13 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 
 void EnumAllDiskPartitions()
 {
+	EFI_DRIVER_BINDING_PROTOCOL *gPartitionDriverBinding
 	for (UINTN i = 0; i < NumberOfDiskDevices; i++)
 	{
 		// Skip absent media and partition media.
 		if (DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
 		{
+			
 			CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
 			Print(L"=============================================================================\r\n");
 			Print(L"Part Info of Block Device %u Path: %s\n", i, DiskDevicePath);
