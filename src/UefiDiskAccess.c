@@ -82,7 +82,7 @@ EFI_STATUS EnablePageBreak()
 	}
 	return EFI_SUCCESS;
 }
-
+/*
 void SetGraphicsMode()
 {
 	UINT32 MaxHeight = 0;
@@ -127,6 +127,35 @@ void SetGraphicsMode()
 			}
 		}
 		Print(L"MaxHeight:%d, MaxRow:%d\n",MaxHeight, MaxRow);
+	}
+}
+*/
+#define SetRow 31
+#define SetColumn 100
+
+void SetConsoleMode()
+{
+	UINTN Row;
+	UINTN Column;
+	SIMPLE_TEXT_OUTPUT_MODE mode;
+	UINTN MaxMode;
+	UINTN CurrentMode;
+	EFI_STATUS STATUS;
+	MaxMode = gST->ConOut->Mode->MaxMode;
+	for (CurrentMode = 0; CurrentMode < gST->ConOut->Mode->MaxMode; CurrentMode++)
+	{
+		STATUS = gST-ConOut->QueryMode(gST->ConOut, i, &Column, &Row);
+		if (STATUS == EFI_SUCCESS)
+		{
+			Print(L"Column:%d, Row:%d", Column, Row);
+			if (Row >= SetRow && Column >= SetColumn)
+			{
+				//gST->ConOut->SetMode(gST->ConOut, i);
+				//gST->ConOut->ClearScreen(gST->ConOut);
+				gST->ConOut->SetAttribute(gST->ConOut, EFI_BACKGROUND_BLACK | EFI_LIGHTGRAY);
+				//break;
+			}
+		}
 	}
 }
 
