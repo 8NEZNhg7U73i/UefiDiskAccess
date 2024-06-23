@@ -389,10 +389,7 @@ EFI_STATUS InitializeDiskIoProtocol()
 				STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[i], NULL);
 				if (STATUS == EFI_SUCCESS)
 				Print (L"STATUS: %r\n", STATUS);
-				{
-					Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
-				}
-				Print (L"STATUS: %r\n", STATUS);
+				Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
 				/*
 				if (HandleBuffer[i] == CurrentImage->DeviceHandle)
 				{
