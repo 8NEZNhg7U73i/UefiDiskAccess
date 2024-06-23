@@ -8,10 +8,13 @@
 
 [Sources]
   UefiDiskAccess.c
-  Partition.h
-  Gpt.c
+  ComponentName.c
   Mbr.c
+  Gpt.c
+  ElTorito.c
+  Udf.c
   Partition.c
+  Partition.h
 
 [Packages]
   MdePkg/MdePkg.dec
