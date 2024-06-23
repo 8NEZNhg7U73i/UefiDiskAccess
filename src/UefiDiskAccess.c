@@ -315,7 +315,6 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 
 void EnumAllDiskPartitions()
 {
-	EFI_DRIVER_BINDING_PROTOCOL *gPartitionDriverBinding
 	for (UINTN i = 0; i < NumberOfDiskDevices; i++)
 	{
 		// Skip absent media and partition media.
