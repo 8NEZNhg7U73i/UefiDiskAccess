@@ -97,12 +97,12 @@ void SetGraphicsMode()
 	UINTN CurrentMode;
 	EFI_DEVICE_PATH *DevicePath;
 	CHAR16 *StrPath;
-	UINT32 i;
+	UINTN i;
 	EFI_GRAPHICS_OUTPUT_MODE_INFORMATION *GraphInfo;
 	//EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE *GraphMode;
 	STATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiGraphicsOutputProtocolGuid, NULL, &GraphCount, &GraphHandles);
 	Print(L"GraphCount:%d\n", GraphCount);
-	for (i = 0; i < (UINT32) GraphCount; i++)
+	for (i = 0; i < GraphCount; i++)
 	{
 		Print(L"i:%d\n", i);
 		STATUS = gBS->HandleProtocol(GraphHandles[i], &gEfiGraphicsOutputProtocolGuid, &GraphOut);
@@ -114,7 +114,7 @@ void SetGraphicsMode()
 		Print(L"MaxMode:%d, Mode:%d\n", MaxMode, CurrentMode);
 		for (i = 0; i < MaxMode; i++)
 		{
-			STATUS = GraphOut->QueryMode(GraphOut, i, &SizeOfInfo, &GraphInfo);
+			STATUS = GraphOut->QueryMode(GraphOut,(UINT32) i, &SizeOfInfo, &GraphInfo);
 			Print(L"Graphics Mode %d, PixelFormat %d:[%d,%d]\n", i, GraphInfo->PixelFormat, GraphInfo->HorizontalResolution, GraphInfo->VerticalResolution);
 			if (GraphInfo->HorizontalResolution > MaxHeight)
 			{
