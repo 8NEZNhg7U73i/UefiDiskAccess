@@ -367,7 +367,7 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID
 
 EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 {
-	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage)
+	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 	//Print(L"%0X\n", CurrentImage);
 	UINTN BuffCount = 0;
 	EFI_HANDLE *HandleBuffer = NULL;
