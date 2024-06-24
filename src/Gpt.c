@@ -259,6 +259,7 @@ PartitionInstallGptChildHandles (
     GptValidStatus = Status;
     goto Done;
   }
+  Print(L"PartitionInstallChildHandle: %r\n", Status);
 
   //
   // Verify that the Protective MBR is valid
@@ -364,6 +365,7 @@ PartitionInstallGptChildHandles (
   // If we got this far the GPT layout of the disk is valid and we should return true
   //
   GptValidStatus = EFI_SUCCESS;
+  Print(L"PartitionInstallChildHandle: %r\n", Status);
 
   //
   // Create child device handles
@@ -408,6 +410,7 @@ PartitionInstallGptChildHandles (
     DEBUG ((EFI_D_INFO, " Partition size: %lx\n", (UINT64) HdDev.PartitionSize));
     DEBUG ((EFI_D_INFO, " Start : %lx", MultU64x32 (Entry->StartingLBA, BlockSize)));
     DEBUG ((EFI_D_INFO, " End : %lx\n", MultU64x32 (Entry->EndingLBA, BlockSize)));
+  Print(L"PartitionInstallChildHandle: %r\n", Status);
 
     Status = PartitionInstallChildHandle (
                This,
