@@ -1149,6 +1149,7 @@ PartitionInstallChildHandle (
   if (Private == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
+  Print(L"PartitionInstallChildHandle1: %r\n", Status);
 
   Private->Signature        = PARTITION_PRIVATE_DATA_SIGNATURE;
 
@@ -1215,6 +1216,7 @@ PartitionInstallChildHandle (
   }
 
   Private->DevicePath     = AppendDevicePathNode (ParentDevicePath, DevicePathNode);
+  Print(L"PartitionInstallChildHandle1: %r\n", Status);
 
   if (Private->DevicePath == NULL) {
     FreePool (Private);
@@ -1265,6 +1267,7 @@ PartitionInstallChildHandle (
                     NULL
                     );
   }
+  Print(L"PartitionInstallChildHandle1: %r\n", Status);
 
   if (!EFI_ERROR (Status)) {
     //
@@ -1289,6 +1292,7 @@ PartitionInstallChildHandle (
     //
     if (Status == EFI_ALREADY_STARTED) {
       Status = EFI_SUCCESS;
+  Print(L"PartitionInstallChildHandle1: %r\n", Status);
     }
   }
 
