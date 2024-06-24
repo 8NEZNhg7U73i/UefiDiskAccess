@@ -465,6 +465,7 @@ EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TA
 		Print(L"Powered by zero.tangptr@gmail.com, Copyright Zero Tang, 2021, All Rights Reserved.\r\n");
 		Print(L"UEFI Firmware Vendor: %s Revision: %d.%d\n", SystemTable->FirmwareVendor, RevHi, RevLo);
 		STATUS = InitializeDiskIoProtocol(ImageHandle);
+		Print(L"DiskIoProtocol: %r\n", STATUS);
 		//STATUS = InitializePartition(ImageHandle, SystemTable);
 		if (STATUS == EFI_SUCCESS)
 		{
