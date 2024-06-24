@@ -372,6 +372,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
   EFI_BLOCK_IO_PROTOCOL        *BlockIo;
   EFI_BLOCK_IO2_PROTOCOL       *BlockIo2;
   EFI_DEVICE_PATH_PROTOCOL     *DevicePath;
+	CHAR16                       *StrPath;
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 	//Print(L"%0X\n", CurrentImage);
 	UINTN BuffCount = 0;
@@ -402,6 +403,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiDiskIo2ProtocolGuid, &DiskIo2);
 				Print(L"DiskIo2: %r\n", STATUS);
 				DevicePath = DiskDevices[i].DevicePath;
+				StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 				STATUS = PartitionInstallGptChildHandles (&gPartitionDriverBinding, HandleBuffer[i], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
 				//if (STATUS == EFI_SUCCESS)
 				Print (L"PartitionInstallGptChildHandles: %r\n", STATUS);
