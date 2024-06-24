@@ -412,6 +412,8 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				Print (L"PartitionInstallMbrChildHandles: %r\n", STATUS);
 				//if (STATUS == EFI_SUCCESS)
 				Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
+				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
+				Print(L"PartInfo: %r\n", )
 				/*
 				if (HandleBuffer[i] == CurrentImage->DeviceHandle)
 				{
