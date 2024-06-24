@@ -382,6 +382,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 	// CONST CHAR16 *CurrentName;
 	// Locate all devices that support Disk I/O Protocol.
 	DISKSTATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BuffCount, &HandleBuffer);
+	Print(L"DISKSTATUS:%r\n", DISKSTATUS);
 	if (DISKSTATUS == EFI_SUCCESS)
 	{
 		DiskDevices = AllocateZeroPool(sizeof(DISK_DEVICE_OBJECT) * BuffCount);
