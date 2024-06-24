@@ -1238,16 +1238,6 @@ PartitionInstallChildHandle (
   // Create the new handle.
   //
   Private->Handle = NULL;
-  if (Private->DiskIo2 != NULL) {
-    Status = gBS->InstallMultipleProtocolInterfaces (
-                    &Private->Handle,
-                    &gEfiBlockIo2ProtocolGuid,
-                    &Private->BlockIo2,
-                    TypeGuid,
-                    NULL,
-                    NULL
-                    );
-  }
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Private->Handle,
                   &gEfiPartitionInfoProtocolGuid,
@@ -1256,7 +1246,7 @@ PartitionInstallChildHandle (
                   NULL,
                   NULL
                   );
-  }
+
   Print(L"PartitionInstallChildHandle1: %r\n", Status);
 
   if (!EFI_ERROR (Status)) {
