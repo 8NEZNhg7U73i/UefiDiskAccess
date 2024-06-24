@@ -367,6 +367,11 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID
 
 EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 {
+  IN  EFI_DISK_IO_PROTOCOL         *DiskIo,
+  IN  EFI_DISK_IO2_PROTOCOL        *DiskIo2,
+  IN  EFI_BLOCK_IO_PROTOCOL        *BlockIo,
+  IN  EFI_BLOCK_IO2_PROTOCOL       *BlockIo2,
+  IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 	//Print(L"%0X\n", CurrentImage);
 	UINTN BuffCount = 0;
@@ -387,7 +392,8 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
-				STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[i], NULL);
+				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[i], NULL);
+				STATUS = PartitionInstallGptChildHandles (&gPartitionDriverBinding, HandleBuffer[i], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
 				//if (STATUS == EFI_SUCCESS)
 				Print (L"STATUS: %r\n", STATUS);
 				Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
