@@ -425,7 +425,7 @@ PartitionInstallGptChildHandles (
                &Entry->PartitionTypeGUID
                );
   }
-
+  Print(L"PartitionInstallChildHandle: %r\n", Status);
   DEBUG ((EFI_D_INFO, "Prepare to Free Pool\n"));
 
 Done:
