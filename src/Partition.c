@@ -1267,7 +1267,37 @@ PartitionInstallChildHandle (
                     NULL
                     );
   }
-  Print(L"PartitionInstallChildHandle1: %r\n", Status);
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &Private->Handle,
+                  &gEfiDevicePathProtocolGuid,
+                  Private->DevicePath,
+                  NULL,
+                  NULL
+                  );
+
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &Private->Handle,
+                  &gEfiBlockIoProtocolGuid,
+                  &Private->BlockIo,
+                  NULL,
+                  NULL
+                  );
+
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &Private->Handle,
+                  &gEfiPartitionInfoProtocolGuid,
+                  &Private->PartitionInfo,
+                  NULL,
+                  NULL
+                  );
+
+  Status = gBS->InstallMultipleProtocolInterfaces (
+                  &Private->Handle,
+                  TypeGuid,
+                  NULL,
+                  NULL,
+                  NULL
+                  );
 
   if (!EFI_ERROR (Status)) {
     //
