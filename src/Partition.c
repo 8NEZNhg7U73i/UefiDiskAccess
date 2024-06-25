@@ -1241,28 +1241,8 @@ PartitionInstallChildHandle (
   if (Private->DiskIo2 != NULL) {
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &Private->Handle,
-                    &gEfiDevicePathProtocolGuid,
-                    Private->DevicePath,
-                    &gEfiBlockIoProtocolGuid,
-                    &Private->BlockIo,
                     &gEfiBlockIo2ProtocolGuid,
                     &Private->BlockIo2,
-                    &gEfiPartitionInfoProtocolGuid,
-                    &Private->PartitionInfo,
-                    TypeGuid,
-                    NULL,
-                    NULL
-                    );
-  } else {
-    Status = gBS->InstallMultipleProtocolInterfaces (
-                    &Private->Handle,
-                    &gEfiDevicePathProtocolGuid,
-                    Private->DevicePath,
-                    &gEfiBlockIoProtocolGuid,
-                    &Private->BlockIo,
-                    &gEfiPartitionInfoProtocolGuid,
-                    &Private->PartitionInfo,
-                    TypeGuid,
                     NULL,
                     NULL
                     );
