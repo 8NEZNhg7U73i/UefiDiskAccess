@@ -406,6 +406,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiDiskIo2ProtocolGuid, &DiskIo2);
 					//Print(L"DiskIo2: %r\n", STATUS);
 					DevicePath = DiskDevices[i].DevicePath;
+					Print(L"DiskHandle: %p\n", HandleBuffer[i]);
 					StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 					Print(L"StrPath: %s\n", StrPath);
 					STATUS = PartitionInstallGptChildHandles (&gPartitionDriverBinding, HandleBuffer[i], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
