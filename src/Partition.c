@@ -1363,7 +1363,7 @@ InitializePartition (
     if (BlockIo->Media->MediaPresent && BlockIo->Media->LogicalPartition)
     {
       Print(L"CurrentHandle: %d\n", CurrentHandle);
-      Print(L"Handle:%p\n", &Handle[CurrentHandle]);
+      Print(L"Handle:%p\n", Handle[CurrentHandle]);
       PartitionInfo = AllocateZeroPool(sizeof(EFI_PARTITION_INFO_PROTOCOL));
       Status = gBS->InstallMultipleProtocolInterfaces(Handle[CurrentHandle], &gEfiPartitionInfoProtocolGuid, PartitionInfo, NULL, NULL);
       //Status = gBS->HandleProtocol(Handle[CurrentHandle], &gEfiPartitionInfoProtocolGuid, &PartitionInfo);
