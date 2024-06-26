@@ -409,6 +409,7 @@ PartitionInstallGptChildHandles (
     DEBUG ((EFI_D_INFO, " Start : %lx", MultU64x32 (Entry->StartingLBA, BlockSize)));
     DEBUG ((EFI_D_INFO, " End : %lx\n", MultU64x32 (Entry->EndingLBA, BlockSize)));
 
+    Print(L"Handle: %p\n", &Handle);
     Status = PartitionInstallChildHandle (
                This,
                Handle,
