@@ -1310,7 +1310,7 @@ PartitionInstallChildHandle (
       Status = EFI_SUCCESS;
   Print(L"PartitionInstallChildHandle1: %r\n", Status);
     }
-  }
+  //}
 
   return Status;
 }
