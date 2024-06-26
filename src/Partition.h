@@ -69,13 +69,6 @@ typedef struct {
   EFI_BLOCK_IO2_TOKEN          *BlockIo2Token;
 } PARTITION_ACCESS_TASK;
 
-EFI_STATUS
-EFIAPI
-InitializePartition (
-  IN EFI_HANDLE           ImageHandle,
-  IN EFI_SYSTEM_TABLE     *SystemTable
-  )
-  
 #define PARTITION_DEVICE_FROM_BLOCK_IO_THIS(a)  CR (a, PARTITION_PRIVATE_DATA, BlockIo, PARTITION_PRIVATE_DATA_SIGNATURE)
 #define PARTITION_DEVICE_FROM_BLOCK_IO2_THIS(a) CR (a, PARTITION_PRIVATE_DATA, BlockIo2, PARTITION_PRIVATE_DATA_SIGNATURE)
 
@@ -489,5 +482,11 @@ EFI_STATUS
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   );
 
-
+EFI_STATUS
+EFIAPI
+InitializePartition (
+  IN EFI_HANDLE           ImageHandle,
+  IN EFI_SYSTEM_TABLE     *SystemTable
+  )
+  
 #endif
