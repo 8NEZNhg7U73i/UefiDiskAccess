@@ -1146,7 +1146,7 @@ PartitionInstallChildHandle (
   if (Private == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  Print(L"PartitionInstallChildHandle1: %r\n", Status);
+  //Print(L"PartitionInstallChildHandle1: %r\n", Status);
 
   Private->Signature        = PARTITION_PRIVATE_DATA_SIGNATURE;
 

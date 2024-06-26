@@ -373,7 +373,6 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
   EFI_BLOCK_IO2_PROTOCOL       *BlockIo2;
   EFI_DEVICE_PATH_PROTOCOL     *DevicePath;
 	CHAR16                       *StrPath;
-	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 	//Print(L"%0X\n", CurrentImage);
 	UINTN BuffCount = 0;
@@ -393,11 +392,10 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 			for (UINTN i = 0; i < BuffCount; i++)
 			{
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
-				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DiskDevices[i].DevicePath;
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
 				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[i], NULL);
-				if (DevicePathMask->Header.Type != MEDIA_DEVICE_PATH) {
+				if (DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
 					STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &BlockIo);
 					//Print(L"BlockIo: %r\n", STATUS);
 					STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIo2ProtocolGuid, &BlockIo2);
