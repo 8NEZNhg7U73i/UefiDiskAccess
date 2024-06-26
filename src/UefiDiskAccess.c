@@ -396,13 +396,13 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
 				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[i], NULL);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &BlockIo);
-				Print(L"BlockIo: %r\n", STATUS);
+				//Print(L"BlockIo: %r\n", STATUS);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIo2ProtocolGuid, &BlockIo2);
-				Print(L"BlockIo2: %r\n", STATUS);
+				//Print(L"BlockIo2: %r\n", STATUS);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiDiskIoProtocolGuid, &DiskIo);
-				Print(L"DiskIo: %r\n", STATUS);
+				//Print(L"DiskIo: %r\n", STATUS);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiDiskIo2ProtocolGuid, &DiskIo2);
-				Print(L"DiskIo2: %r\n", STATUS);
+				//Print(L"DiskIo2: %r\n", STATUS);
 				DevicePath = DiskDevices[i].DevicePath;
 				StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 				Print(L"StrPath: %s\n", StrPath);
@@ -411,7 +411,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				STATUS = PartitionInstallMbrChildHandles (&gPartitionDriverBinding, HandleBuffer[i], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
 				Print (L"PartitionInstallMbrChildHandles: %r\n", STATUS);
 				//if (STATUS == EFI_SUCCESS)
-				Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
+				//Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
 				Print(L"PartInfo: %r\n", STATUS);
 				/*
