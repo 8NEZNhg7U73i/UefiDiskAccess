@@ -1213,7 +1213,7 @@ PartitionInstallChildHandle (
   }
 
   Private->DevicePath     = AppendDevicePathNode (ParentDevicePath, DevicePathNode);
-  Print(L"PartitionInstallChildHandle1: %r\n", Status);
+  //Print(L"PartitionInstallChildHandle1: %r\n", Status);
 
   if (Private->DevicePath == NULL) {
     FreePool (Private);
@@ -1308,9 +1308,9 @@ PartitionInstallChildHandle (
     // are already installed. So return EFI_SUCCESS to avoid do the next
     // partition type check.
     //
-    if (Status == EFI_ALREADY_STARTED) {
-      Status = EFI_SUCCESS;
-  Print(L"PartitionInstallChildHandle1: %r\n", Status);
+    //if (Status == EFI_ALREADY_STARTED) {
+      //Status = EFI_SUCCESS;
+    //Print(L"PartitionInstallChildHandle1: %r\n", Status);
     }
   //}
 
