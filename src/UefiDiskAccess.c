@@ -394,7 +394,8 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
-				Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[i], NULL);
+				Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
+				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[i], NULL);
 				if (DiskDevices[i].BlockIo->Media->MediaPresent && !DiskDevices[i].BlockIo->Media->LogicalPartition)
 				{
 					STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &BlockIo);
