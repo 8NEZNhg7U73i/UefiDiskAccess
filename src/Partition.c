@@ -1293,6 +1293,7 @@ PartitionInstallChildHandle (
                     Private->Handle,
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
+    Print(L"OpenProtocolForChild: %r\n", Status);
   /*
   } else {
     FreePool (Private->DevicePath);
