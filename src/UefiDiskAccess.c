@@ -416,6 +416,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					//Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
 					STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
 					Print(L"PartInfo: %r\n", STATUS);
+					Print(L"\n\n");
 				}
 				/*
 				if (HandleBuffer[i] == CurrentImage->DeviceHandle)
