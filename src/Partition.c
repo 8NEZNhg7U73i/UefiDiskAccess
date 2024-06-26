@@ -1293,6 +1293,10 @@ PartitionInstallChildHandle (
                     Private->Handle,
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
+    Print(L"Handle: %p\n", &Private->Handle);
+    Print(L"ParentHandle: %p\n", &ParentHandle);
+    Print(L"AgentHandle: %p\n", &This->DriverBindingHandle);
+    Print(L"ControllerHandle: %p\n", &Private->Handle);
     Print(L"OpenProtocolForChild: %r\n", Status);
   /*
   } else {
