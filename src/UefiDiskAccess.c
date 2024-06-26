@@ -373,7 +373,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
   EFI_BLOCK_IO2_PROTOCOL       *BlockIo2;
   EFI_DEVICE_PATH_PROTOCOL     *DevicePath;
 	CHAR16                       *StrPath;
-	HARDDRIVE_DEVICE_PATH *DevicePathMask;
+	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 	//Print(L"%0X\n", CurrentImage);
 	UINTN BuffCount = 0;
