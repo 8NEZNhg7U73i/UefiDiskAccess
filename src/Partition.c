@@ -1246,6 +1246,7 @@ PartitionInstallChildHandle (
                     NULL,
                     NULL
                     );
+    Print(L"gEfiBlockIo2ProtocolGuid: %r\n", Status);
   }
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Private->Handle,
@@ -1254,6 +1255,7 @@ PartitionInstallChildHandle (
                   NULL,
                   NULL
                   );
+  Print(L"gEfiDevicePathProtocolGuid: %r\n", Status);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Private->Handle,
@@ -1262,6 +1264,7 @@ PartitionInstallChildHandle (
                   NULL,
                   NULL
                   );
+  Print(L"gEfiBlockIoProtocolGuid: %r\n", Status);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Private->Handle,
@@ -1270,6 +1273,7 @@ PartitionInstallChildHandle (
                   NULL,
                   NULL
                   );
+  Print(L"gEfiPartitionInfoProtocolGuid: %r\n", Status);
 
   Status = gBS->InstallMultipleProtocolInterfaces (
                   &Private->Handle,
@@ -1278,23 +1282,25 @@ PartitionInstallChildHandle (
                   NULL,
                   NULL
                   );
+  Print(L"TypeGuid: %r\n", Status);
 
-  if (!EFI_ERROR (Status)) {
+  //if (!EFI_ERROR (Status)) {
     //
     // Open the Parent Handle for the child
     //
     Status = gBS->OpenProtocol (
                     ParentHandle,
-                    &gEfiDiskIoProtocolGuid,
+                    &gEfiPartitionInfoProtocolGuid,
                     (VOID **) &ParentDiskIo,
                     This->DriverBindingHandle,
                     Private->Handle,
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
+  /*
   } else {
     FreePool (Private->DevicePath);
     FreePool (Private);
-
+*/
     //
     // if the Status == EFI_ALREADY_STARTED, it means the child handles
     // are already installed. So return EFI_SUCCESS to avoid do the next
