@@ -393,7 +393,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 			for (UINTN i = 0; i < BuffCount; i++)
 			{
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
-				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DevicePath;
+				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DiskDevices[i].DevicePath;
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
 				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[i], NULL);
