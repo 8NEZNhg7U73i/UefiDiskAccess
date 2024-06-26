@@ -100,7 +100,7 @@ PartitionDriverBindingSupported (
       }
     }
   }
-  Print(L"a\n");
+
   //
   // Open the IO Abstraction(s) needed to perform the supported test
   //
