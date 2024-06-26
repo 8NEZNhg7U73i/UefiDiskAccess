@@ -1308,8 +1308,8 @@ PartitionInstallChildHandle (
     // are already installed. So return EFI_SUCCESS to avoid do the next
     // partition type check.
     //
-    //if (Status == EFI_ALREADY_STARTED) {
-      //Status = EFI_SUCCESS;
+    if (Status == EFI_ALREADY_STARTED) {
+      Status = EFI_ALREADY_STARTED;
     //Print(L"PartitionInstallChildHandle1: %r\n", Status);
     }
   //}
