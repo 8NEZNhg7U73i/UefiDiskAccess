@@ -470,13 +470,6 @@ PartitionInstallUdfChildHandles (
   IN  EFI_DEVICE_PATH_PROTOCOL     *DevicePath
   );
 
-EFI_STATUS
-EFIAPI
-InitializePartition (
-  IN EFI_HANDLE           ImageHandle,
-  IN EFI_SYSTEM_TABLE     *SystemTable
-  );
-
 typedef
 EFI_STATUS
 (*PARTITION_DETECT_ROUTINE) (
