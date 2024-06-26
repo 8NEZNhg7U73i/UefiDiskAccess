@@ -1287,8 +1287,8 @@ PartitionInstallChildHandle (
     //
     Status = gBS->OpenProtocol (
                     ParentHandle,
-                    &gEfiDiskIoProtocolGuid,
-                    (VOID **) &ParentDiskIo,
+                    &gEfiPartitionInfoProtocolGuid,
+                    (VOID **) &PartitionInfo,
                     This->DriverBindingHandle,
                     Private->Handle,
                     EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
