@@ -383,6 +383,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 	// Locate all devices that support Disk I/O Protocol.
 	DISKSTATUS = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BuffCount, &HandleBuffer);
 	Print(L"DISKSTATUS:%r\n", DISKSTATUS);
+	Print(L"\n");
 	if (DISKSTATUS == EFI_SUCCESS)
 	{
 		DiskDevices = AllocateZeroPool(sizeof(DISK_DEVICE_OBJECT) * BuffCount);
@@ -394,6 +395,9 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				DiskDevices[i].DevicePath = DevicePathFromHandle(HandleBuffer[i]);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiBlockIoProtocolGuid, &DiskDevices[i].BlockIo);
 				STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
+				StrPath = ConvertDevicePathToText(DiskDevices[i].DevicePath, FALSE, FALSE);
+				Print(L"StrPath: %s\n", StrPath);
+				Print(L"gEfiPartitionInfoProtocolGuid:%r\n", STATUS);
 				Print(L"PartInfo0: %r\n", STATUS);
 				Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
 				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[i], NULL);
@@ -409,16 +413,16 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					//Print(L"DiskIo2: %r\n", STATUS);
 					DevicePath = DiskDevices[i].DevicePath;
 					Print(L"DiskHandle: %p\n", HandleBuffer[i]);
-					StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
-					Print(L"StrPath: %s\n", StrPath);
+					//StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
+					//Print(L"StrPath: %s\n", StrPath);
 					STATUS = PartitionInstallGptChildHandles (&gPartitionDriverBinding, HandleBuffer[i], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
 					Print (L"PartitionInstallGptChildHandles: %r\n", STATUS);
 					STATUS = PartitionInstallMbrChildHandles (&gPartitionDriverBinding, HandleBuffer[i], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
 					Print (L"PartitionInstallMbrChildHandles: %r\n", STATUS);
 					//if (STATUS == EFI_SUCCESS)
 					//Print(L"Type:%d\n", (DiskDevices[i].PartInfo)->Type);
-					STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
-					Print(L"PartInfo1: %r\n", STATUS);
+					//STATUS = gBS->HandleProtocol(HandleBuffer[i], &gEfiPartitionInfoProtocolGuid, &DiskDevices[i].PartInfo);
+					//Print(L"PartInfo1: %r\n", STATUS);
 					Print(L"\n");
 				}
 				/*
