@@ -1291,7 +1291,7 @@ PartitionInstallChildHandle (
                     (VOID **) &PartitionInfo,
                     This->DriverBindingHandle,
                     Private->Handle,
-                    EFI_OPEN_PROTOCOL_BY_DRIVER
+                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
                     );
     Print(L"Status: %r\n", Status);
     Print(L"Handle: %p\n", Private->Handle);
