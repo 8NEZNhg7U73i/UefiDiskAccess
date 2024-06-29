@@ -1237,7 +1237,6 @@ PartitionInstallChildHandle (
   //
 
   Print(L"PartitionNumber: %d\n", ((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber);
-  Print(L"ControllerHandle: %p\n", EntryBuffer[((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber].ControllerHandle);
   Status = gBS->OpenProtocolInformation(ParentHandle, &gEfiDiskIoProtocolGuid, &EntryBuffer, &EntryCount);
   Status = gBS->InstallMultipleProtocolInterfaces (
             &(EntryBuffer[((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber].ControllerHandle),
@@ -1246,6 +1245,7 @@ PartitionInstallChildHandle (
             NULL,
             NULL
             );
+  Print(L"ControllerHandle: %p\n", EntryBuffer[((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber].ControllerHandle);
 	Print(L"InstallMultipleProtocolInterfaces: %r\n", Status);
 
   Private->Handle = NULL;
