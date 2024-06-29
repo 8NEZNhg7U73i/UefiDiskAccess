@@ -1293,7 +1293,7 @@ PartitionInstallChildHandle (
                     Private->Handle,
                     EFI_OPEN_PROTOCOL_BY_DRIVER
                     );
-    Print(L:Status: %r\n", Status);
+    Print(L"Status: %r\n", Status);
     Print(L"Handle: %p\n", Private->Handle);
     Print(L"ParentHandle: %p\n", ParentHandle);
     Print(L"AgentHandle: %p\n", This->DriverBindingHandle);
