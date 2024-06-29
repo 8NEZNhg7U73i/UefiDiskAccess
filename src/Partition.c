@@ -1140,6 +1140,9 @@ PartitionInstallChildHandle (
 {
   EFI_STATUS              Status;
   PARTITION_PRIVATE_DATA  *Private;
+	EFI_OPEN_PROTOCOL_INFORMATION_ENTRY EntryBuffer;
+	UINTN                        EntryCount;
+	UINTN                        EntryIndex;
 
   Status  = EFI_SUCCESS;
   Private = AllocateZeroPool (sizeof (PARTITION_PRIVATE_DATA));
@@ -1232,6 +1235,17 @@ PartitionInstallChildHandle (
   //
   // Create the new handle.
   //
+
+  Status = gBS->OpenProtocolInformation(ParentHandle, &gEfiDiskIoProtocolGuid, &EntryBuffer, &EntryCount);
+  Status = gBS->InstallMultipleProtocolInterfaces (
+            &(EntryBuffer[PartitionInfo->PartitionNumber]->ControllerHandle),
+            &gEfiPartitionInfoProtocolGuid,
+            &Private->PartitionInfo,
+            NULL,
+            NULL
+            );
+	Print(L"InstallMultipleProtocolInterfaces: %r\n", STATUS);
+
   Private->Handle = NULL;
   if (Private->DiskIo2 != NULL) {
     Status = gBS->InstallMultipleProtocolInterfaces (
