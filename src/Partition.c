@@ -1142,7 +1142,7 @@ PartitionInstallChildHandle (
   PARTITION_PRIVATE_DATA  *Private;
 	EFI_OPEN_PROTOCOL_INFORMATION_ENTRY *EntryBuffer;
 	UINTN                        EntryCount;
-	UINTN                        EntryIndex;
+	//UINTN                        EntryIndex;
 
   Status  = EFI_SUCCESS;
   Private = AllocateZeroPool (sizeof (PARTITION_PRIVATE_DATA));
@@ -1235,7 +1235,7 @@ PartitionInstallChildHandle (
   //
   // Create the new handle.
   //
-  
+
   Print(L"PartitionNumber: %d\n", ((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber);
   Status = gBS->OpenProtocolInformation(ParentHandle, &gEfiDiskIoProtocolGuid, &EntryBuffer, &EntryCount);
   Status = gBS->InstallMultipleProtocolInterfaces (
