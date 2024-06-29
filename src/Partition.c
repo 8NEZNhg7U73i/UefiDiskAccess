@@ -1244,7 +1244,7 @@ PartitionInstallChildHandle (
             NULL,
             NULL
             );
-	Print(L"InstallMultipleProtocolInterfaces: %r\n", STATUS);
+	Print(L"InstallMultipleProtocolInterfaces: %r\n", Status);
 
   Private->Handle = NULL;
   if (Private->DiskIo2 != NULL) {
