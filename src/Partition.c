@@ -1146,7 +1146,6 @@ PartitionInstallChildHandle (
   if (Private == NULL) {
     return EFI_OUT_OF_RESOURCES;
   }
-  //Print(L"PartitionInstallChildHandle1: %r\n", Status);
 
   Private->Signature        = PARTITION_PRIVATE_DATA_SIGNATURE;
 
@@ -1213,7 +1212,6 @@ PartitionInstallChildHandle (
   }
 
   Private->DevicePath     = AppendDevicePathNode (ParentDevicePath, DevicePathNode);
-  //Print(L"PartitionInstallChildHandle1: %r\n", Status);
 
   if (Private->DevicePath == NULL) {
     FreePool (Private);
@@ -1238,82 +1236,58 @@ PartitionInstallChildHandle (
   if (Private->DiskIo2 != NULL) {
     Status = gBS->InstallMultipleProtocolInterfaces (
                     &Private->Handle,
+                    &gEfiDevicePathProtocolGuid,
+                    Private->DevicePath,
+                    &gEfiBlockIoProtocolGuid,
+                    &Private->BlockIo,
                     &gEfiBlockIo2ProtocolGuid,
                     &Private->BlockIo2,
+                    &gEfiPartitionInfoProtocolGuid,
+                    &Private->PartitionInfo,
+                    TypeGuid,
                     NULL,
                     NULL
                     );
-    Print(L"gEfiBlockIo2ProtocolGuid: %r\n", Status);
+  } else {
+    Status = gBS->InstallMultipleProtocolInterfaces (
+                    &Private->Handle,
+                    &gEfiDevicePathProtocolGuid,
+                    Private->DevicePath,
+                    &gEfiBlockIoProtocolGuid,
+                    &Private->BlockIo,
+                    &gEfiPartitionInfoProtocolGuid,
+                    &Private->PartitionInfo,
+                    TypeGuid,
+                    NULL,
+                    NULL
+                    );
   }
-  Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Private->Handle,
-                  &gEfiDevicePathProtocolGuid,
-                  Private->DevicePath,
-                  NULL,
-                  NULL
-                  );
-  Print(L"gEfiDevicePathProtocolGuid: %r\n", Status);
 
-  Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Private->Handle,
-                  &gEfiBlockIoProtocolGuid,
-                  &Private->BlockIo,
-                  NULL,
-                  NULL
-                  );
-  Print(L"gEfiBlockIoProtocolGuid: %r\n", Status);
-
-  Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Private->Handle,
-                  &gEfiPartitionInfoProtocolGuid,
-                  &Private->PartitionInfo,
-                  NULL,
-                  NULL
-                  );
-  Print(L"gEfiPartitionInfoProtocolGuid: %r\n", Status);
-
-  Status = gBS->InstallMultipleProtocolInterfaces (
-                  &Private->Handle,
-                  TypeGuid,
-                  NULL,
-                  NULL,
-                  NULL
-                  );
-  Print(L"TypeGuid: %r\n", Status);
-
-  //if (!EFI_ERROR (Status)) {
+  if (!EFI_ERROR (Status)) {
     //
     // Open the Parent Handle for the child
     //
     Status = gBS->OpenProtocol (
                     ParentHandle,
-                    &gEfiPartitionInfoProtocolGuid,
-                    (VOID **) &PartitionInfo,
+                    &gEfiDiskIoProtocolGuid,
+                    (VOID **) &ParentDiskIo,
                     This->DriverBindingHandle,
                     Private->Handle,
-                    EFI_OPEN_PROTOCOL_GET_PROTOCOL
+                    EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER
                     );
-    Print(L"Status: %r\n", Status);
-    Print(L"Handle: %p\n", Private->Handle);
-    Print(L"ParentHandle: %p\n", ParentHandle);
-    Print(L"AgentHandle: %p\n", This->DriverBindingHandle);
-    Print(L"ControllerHandle: %p\n", Private->Handle);
-    Print(L"OpenProtocolForChild: %r\n", Status);
-  /*
   } else {
     FreePool (Private->DevicePath);
     FreePool (Private);
-*/
+
     //
     // if the Status == EFI_ALREADY_STARTED, it means the child handles
     // are already installed. So return EFI_SUCCESS to avoid do the next
     // partition type check.
     //
     if (Status == EFI_ALREADY_STARTED) {
-      Status = EFI_ALREADY_STARTED;
-    //Print(L"PartitionInstallChildHandle1: %r\n", Status);
+      Status = EFI_SUCCESS;
     }
-  //}
+  }
 
   return Status;
 }
@@ -1337,11 +1311,7 @@ InitializePartition (
   )
 {
   EFI_STATUS              Status;
-  EFI_HANDLE              *Handle;
-  UINTN                   HandleCount;
-  UINTN                   CurrentHandle;
-  EFI_PARTITION_INFO_PROTOCOL *PartitionInfo=NULL;
-  EFI_BLOCK_IO_PROTOCOL   *BlockIo;
+
   //
   // Install driver model protocol(s).
   //
@@ -1354,24 +1324,9 @@ InitializePartition (
              &gPartitionComponentName2
              );
   ASSERT_EFI_ERROR (Status);
-  Print(L"EfiLibInstallDriverBindingComponentName2: %r\n", Status);
-  Status = gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &HandleCount , &Handle);
-  Print(L"LocateHandleBuffer: %d\n", HandleCount);
-  for (CurrentHandle = 0; CurrentHandle < HandleCount; CurrentHandle++)
-  {
-    Status = gBS->HandleProtocol(Handle[CurrentHandle], &gEfiBlockIoProtocolGuid, &BlockIo);
-    Print(L"HandleProtocol: %r\n", Status);
-    if (BlockIo->Media->MediaPresent && BlockIo->Media->LogicalPartition)
-    {
-      Print(L"CurrentHandle: %d\n", CurrentHandle);
-      Print(L"Handle:%p\n", Handle[CurrentHandle]);
-      PartitionInfo = AllocateZeroPool(sizeof(EFI_PARTITION_INFO_PROTOCOL));
-      Status = gBS->InstallMultipleProtocolInterfaces(Handle[CurrentHandle], &gEfiPartitionInfoProtocolGuid, PartitionInfo, NULL, NULL);
-      //Status = gBS->HandleProtocol(Handle[CurrentHandle], &gEfiPartitionInfoProtocolGuid, &PartitionInfo);
-      Print(L"InstallMultipleProtocolInterfaces: %r\n", Status);
-    }
-  }
-  return EFI_SUCCESS;
+
+
+  return Status;
 }
 
 
