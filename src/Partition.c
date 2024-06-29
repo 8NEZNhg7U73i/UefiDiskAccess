@@ -1140,7 +1140,7 @@ PartitionInstallChildHandle (
 {
   EFI_STATUS              Status;
   PARTITION_PRIVATE_DATA  *Private;
-	EFI_OPEN_PROTOCOL_INFORMATION_ENTRY EntryBuffer;
+	EFI_OPEN_PROTOCOL_INFORMATION_ENTRY **EntryBuffer;
 	UINTN                        EntryCount;
 	UINTN                        EntryIndex;
 
