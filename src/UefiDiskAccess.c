@@ -424,6 +424,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					//Print(L"PartInfo1: %r\n", STATUS);
 					Print(L"\n");
 				}
+				Print(L"\n");
 				/*
 				if (HandleBuffer[i] == CurrentImage->DeviceHandle)
 				{
