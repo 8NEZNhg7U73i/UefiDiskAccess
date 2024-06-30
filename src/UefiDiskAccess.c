@@ -351,7 +351,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 							DisplaySize(MultU64x32(PartitionEntry->StartingLBA, BlockIoProtocol->Media->BlockSize), ScaledStart, sizeof(ScaledStart));
 							DisplaySize(MultU64x32(PartitionEntry->EndingLBA, BlockIoProtocol->Media->BlockSize), ScaledEnd, sizeof(ScaledEnd));
 							DisplaySize(MultU64x32(PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
-							STATUS = FindGptBlockDevice(PartitionEntry, DevicePath, DiskIndex);
+							STATUS = FindGptBlockDevice(PartitionEntry, PartitionIndex, DevicePath, DiskIndex);
 							if (STATUS == EFI_SUCCESS)
 							{
 								Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", PartitionIndex, DiskIndex, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
@@ -475,6 +475,7 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	EFI_LBA LastBlock;
 	EFI_LBA StartingLBA;
 	EFI_LBA EndingLBA;
+	EFI_LBA SizeInLBA;
 	EFI_GUID PartitionTypeGUID;
 	EFI_GUID UniquePartitionGUID;
 	EFI_LBA PartitionStart;
@@ -486,6 +487,7 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	//EFI_BLOCK_IO_PROTOCOL *BlockIO = DiskDevice->BlockIo;
 	EFI_PARTITION_INFO_PROTOCOL *PartitionInfo = DiskDevice->PartInfo;
 	UINTN MBRType;
+	UINTN Type;
 
 	if (!DevicePath)
 	{
@@ -529,19 +531,19 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	//Extract Partition Info Protocol useful data
 	Type = PartitionInfo->Type;
 
-	if (DevicePathMask->SignatureType = 2 && DevicePathMask->SignatureType == PartitionInfo->Type)
+	if (DevicePathMask->SignatureType = 2 && DevicePathMask->MBRType == PartitionInfo->Type)
 	{
 		//PartitionTypeGUID = PartitionInfo->Info->Gpt->PartitionTypeGUID;
 		//UniquePartitionGUID = PartitionInfo->Info->Gpt->UniquePartitionGUID;
-		StartingLBA = PartitionInfo->Info->Gpt->StartingLBA;
-		EndingLBA = PartitionInfo->Info->Gpt->EndingLBA;
+		StartingLBA = PartitionInfo->Info.Gpt->StartingLBA;
+		EndingLBA = PartitionInfo->Info.Gpt->EndingLBA;
 		SizeInLBA = EndingLBA - StartingLBA + 1;
 	}
 
-	if (DevicePathMask->SignatureType = 1 && DevicePathMask->Type == PartitionInfo->Type)
+	if (DevicePathMask->SignatureType = 1 && DevicePathMask->MBRType == PartitionInfo->Type)
 	{
-		StartingLBA = (EFI_LBA)PartitionInfo->Info->Mbr->StartingLBA;
-		SizeInLBA = (EFI_LBA)PartitionInfo->Info->Mbr->SizeInLBA;
+		StartingLBA = (EFI_LBA)PartitionInfo->Info.Mbr->StartingLBA;
+		SizeInLBA = (EFI_LBA)PartitionInfo->Info.Mbr->SizeInLBA;
 		EndingLBA = StartingLBA + SizeInLBA - 1;
 	}
 
