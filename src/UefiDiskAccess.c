@@ -310,6 +310,7 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA My
 		return EFI_OUT_OF_RESOURCES;
 	}
 	FreePool(MBRContent);
+	return EFI_SUCCESS;
 }
 
 EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA)
