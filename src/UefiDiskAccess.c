@@ -316,14 +316,14 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA My
 EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA)
 {
 	EFI_STATUS STATUS;
-	EFI_PARTITION_TABLE_HEADER *PartitionHeader;
-	EFI_PARTITION_ENTRY *PartitionEntry;
+	EFI_PARTITION_TABLE_HEADER *PartitionHeader=NULL;
+	EFI_PARTITION_ENTRY *PartitionEntry=NULL;
 	UINT32 PartitionEntrySize;
 	VOID *PartitionEntries;
-	UINTN PartitionIndex;
-	UINTN DiskIndex;
+	UINTN PartitionIndex=0;
+	UINTN DiskIndex=0;
 	CHAR16 ScaledStart[32], ScaledEnd[32], ScaledSize[32];
-	EFI_DEVICE_PATH_PROTOCOL *DevicePath;
+	EFI_DEVICE_PATH_PROTOCOL *DevicePath=NULL;
 
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, MyLBA, BlockIoProtocol->Media->BlockSize, PartitionHeader);
 	if (STATUS == EFI_SUCCESS)
@@ -395,6 +395,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 		return EFI_OUT_OF_RESOURCES;
 	}
 	FreePool(PartitionHeader);
+	return EFI_SUCCESS;
 }
 
 
