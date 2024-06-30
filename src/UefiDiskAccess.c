@@ -189,8 +189,9 @@ void DisplaySize(IN UINT64 Size, OUT CHAR16 *Buffer, IN UINTN Limit)
 		UnicodeSPrint(Buffer, Limit, L"%u GiB", Size >> 30);
 }
 
-EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN DiskIndex)
+EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, IN UINTN MbrPartIndex, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN DiskIndex)
 {
+	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
 	EFI_STATUS STATUS;
 	//EFI_LBA StartingLBA;
 	//EFI_LBA	EndingLBA;
@@ -199,16 +200,24 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, OUT EFI_DEVICE_PATH_
 		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
 		if (STATUS == EFI_SUCCESS)
 		{
-			DevicePath = DiskDevices[DiskIndex]->DevicePath;
-			DiskIndex = DiskIndex;
-			return EFI_SUCCESS;
+			while (!IsDevicePathEnd(DiskDevices[DiskIndex]->DevicePath))
+			{
+				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DevicePath;
+				DevicePath = NextDevicePathNode(DevicePath);
+			}
+			if (DevicePath->PartitionNumber == MbrPartIndex)
+			{
+				DevicePath = DiskDevices[DiskIndex]->DevicePath;
+				return EFI_SUCCESS;
+			}
 		}
 	}
 	return EFI_DEVICE_ERROR;
 }
 
-EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN DiskIndex)
+EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, IN UINTN GptPartIndex, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN DiskIndex)
 {
+	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
 	EFI_STATUS STATUS;
 	//EFI_LBA StartingLBA;
 	//EFI_LBA EndingLBA;
@@ -217,9 +226,16 @@ EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_DEVICE_PATH_P
 		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Gpt, Gpt, sizeof(EFI_PARTITION_ENTRY));
 		if (STATUS == EFI_SUCCESS)
 		{
-			DevicePath = DiskDevices[DiskIndex]->DevicePath;
-			DiskIndex = DiskIndex;
-			return EFI_SUCCESS;
+			while (!IsDevicePathEnd(DiskDevices[DiskIndex]->DevicePath))
+			{
+				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DevicePath;
+				DevicePath = NextDevicePathNode(DevicePath);
+			}
+			if (DevicePath->PartitionNumber == GptPartIndex)
+			{
+				DevicePath = DiskDevices[DiskIndex]->DevicePath;
+				return EFI_SUCCESS;
+			}
 		}
 	}
 	return EFI_DEVICE_ERROR;
@@ -262,7 +278,7 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA My
 					DisplaySize(__emulu(StartingLBA, BlockIoProtocol->Media->BlockSize), ScaledStart, sizeof(ScaledStart));
 					DisplaySize(__emulu(EndingLBA, BlockIoProtocol->Media->BlockSize), ScaledEnd, sizeof(ScaledEnd));
 					DisplaySize(__emulu(SizeInLBA, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
-					STATUS = FindMbrBlockDevice(MbrPart, DevicePath, DiskIndex);
+					STATUS = FindMbrBlockDevice(MbrPart, MbrPartIndex, DevicePath, DiskIndex);
 					if (STATUS == EFI_SUCCESS)
 					{
 						if (SizeInLBA == 0xFFFFFFFF)
@@ -498,7 +514,6 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	// Print(L"DevPath: %s\n", DevPath);
 	if (DevicePathMask->Header.Type != MEDIA_DEVICE_PATH)
 	{
-		continue;
 		return EFI_DEVICE_ERROR;
 	}
 
