@@ -356,12 +356,10 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 							if (STATUS == EFI_SUCCESS)
 							{
 								Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", PartitionIndex, DiskIndex, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
-								break;
 							}
 							else
 							{
 								Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", PartitionIndex , PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
-								break;
 							}
 							if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid))
 							{
