@@ -244,13 +244,13 @@ EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, IN UINTN GptPartIndex
 EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA MyLBA)
 {
 	EFI_STATUS STATUS;
-	MASTER_BOOT_RECORD *MBRContent;
-	MBR_PARTITION_RECORD *MbrPart;
+	MASTER_BOOT_RECORD *MBRContent=NULL;
+	MBR_PARTITION_RECORD *MbrPart=NULL;
 	UINT32 StartingLBA, SizeInLBA, EndingLBA;
 	CHAR16 ScaledStart[32], ScaledEnd[32], ScaledSize[32];
-	EFI_DEVICE_PATH_PROTOCOL *DevicePath;
-	UINTN MbrPartIndex;
-	UINTN DiskIndex;
+	EFI_DEVICE_PATH_PROTOCOL *DevicePath=NULL;
+	UINTN MbrPartIndex=0;
+	UINTN DiskIndex=0;
 
 	MyLBA = 0;
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, 0, BlockIoProtocol->Media->BlockSize, MBRContent);
