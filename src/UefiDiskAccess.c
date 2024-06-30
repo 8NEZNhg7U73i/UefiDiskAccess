@@ -306,6 +306,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 	UINTN PartitionIndex;
 	UINTN DiskIndex;
 	CHAR16 ScaledStart[32], ScaledEnd[32], ScaledSize[32];
+	EFI_DEVICE_PATH_PROTOCOL *DevicePath;
 
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, MyLBA, BlockIoProtocol->Media->BlockSize, PartitionHeader);
 	if (STATUS == EFI_SUCCESS)
@@ -345,29 +346,29 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 								Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", PartitionIndex , PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
 								break;
 							}
+							if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid))
+							{
+								Print(L"Part Type : efi\n");
+							}
+							else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsReservedPartGuid))
+							{
+								Print(L"Part Type : msr\n");
+							}
+							else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeBasicDataPartGuid))
+							{
+								Print(L"Part Type : data\n");
+							}
+							else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsRecoveryPartGuid))
+							{
+								Print(L"Part Type : wre\n");
+							}
+							else
+							{
+								Print(L"Part Type GUID:    {%g}\n", &PartitionEntry->PartitionTypeGUID);
+							}
+							Print(L"Unique Part GUID:  {%g}\n", &PartitionEntry->UniquePartitionGUID);
 						}
 					}
-					if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid))
-					{
-						Print(L"Part Type : efi\n");
-					}
-					else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsReservedPartGuid))
-					{
-						Print(L"Part Type : msr\n");
-					}
-					else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeBasicDataPartGuid))
-					{
-						Print(L"Part Type : data\n");
-					}
-					else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsRecoveryPartGuid))
-					{
-						Print(L"Part Type : wre\n");
-					}
-					else
-					{
-						Print(L"Part Type GUID:    {%g}\n", &PartitionEntry->PartitionTypeGUID);
-					}
-					Print(L"Unique Part GUID:  {%g}\n", &PartitionEntry->UniquePartitionGUID);
 				}
 			}
 			FreePool(PartitionEntries);
@@ -386,7 +387,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 {
 	EFI_STATUS STATUS;
-	BOOLEAN IsGpt;
+	EFI_LBA MyLBA;
 	if (!BlockIoProtocol->Media->LogicalPartition)
 	{
 		STATUS = EnumMbrDisk(BlockIoProtocol, MyLBA);
@@ -452,7 +453,7 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID
 */
 
 //EFI_STATUS DevicePathConvert(CONST IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, IN EFI_BLOCK_IO_PROTOCOL *BlockIo, IN EFI_PARTITION_INFO_PROTOCOL *PartitionInfo)
-EFI_STATUS DevicePathConvert(IN *DiskDevices)
+EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 {
 	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
 	EFI_LBA LastBlock;
@@ -465,9 +466,9 @@ EFI_STATUS DevicePathConvert(IN *DiskDevices)
 	UINT32 PartitionNumber;
 	UINT8 SignatureType;
 	BOOLEAN IsDisk;
-	EFI_DEVICE_PATH_PROTOCOL *DevicePath = DiskDevices->DevicePath;
-	//EFI_BLOCK_IO_PROTOCOL *BlockIO = DiskDevices->BlockIo;
-	EFI_PARTITION_INFO_PROTOCOL *PartitionInfo = DiskDevices->PartInfo;
+	EFI_DEVICE_PATH_PROTOCOL *DevicePath = DiskDevice->DevicePath;
+	//EFI_BLOCK_IO_PROTOCOL *BlockIO = DiskDevice->BlockIo;
+	EFI_PARTITION_INFO_PROTOCOL *PartitionInfo = DiskDevice->PartInfo;
 
 	if (!DevicePath)
 	{
@@ -627,6 +628,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 
 EFI_STATUS EFIAPI UefiDiskAccessMain(IN EFI_HANDLE ImageHandle, IN EFI_SYSTEM_TABLE *SystemTable)
 {
+	EFI_STATUS STATUS;
 	UINT16 RevHi = (UINT16)(SystemTable->Hdr.Revision >> 16);
 	UINT16 RevLo = (UINT16)(SystemTable->Hdr.Revision & 0xFFFF);
 	//SetConsoleModeToMaximumRows();
