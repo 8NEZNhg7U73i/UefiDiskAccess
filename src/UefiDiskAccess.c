@@ -197,7 +197,7 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, OUT EFI_BLOCK_IO_PRO
 	//EFI_LBA	EndingLBA;
 	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
-		STATUS = ComPareMem(&DiskDevices[DiskIndex]->PartInfo->Info->Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
+		STATUS = CompareMen(&DiskDevices[DiskIndex]->PartInfo->Info.Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
 		if (STATUS == EFI_SUCCESS)
 		{
 			BlockIoProtocol = DiskDevices[DiskIndex]->BlockIo;
@@ -206,7 +206,7 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, OUT EFI_BLOCK_IO_PRO
 	}
 }
 
-EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_BLOCK_IO_PROTOCOL *BlockIoPrrotocol)
+EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 {
 	EFI_STATUS STATUS;
 	UINTN DiskIndex;
@@ -214,7 +214,7 @@ EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_BLOCK_IO_PROT
 	//EFI_LBA EndingLBA;
 	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
-		STATUS = ComPareMem(&DiskDevices[DiskIndex]->PartInfo->Info->Gpt, Gpt, sizeof(MBR_PARTITION_RECORD));
+		STATUS = ComPareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Gpt, Gpt, sizeof(MBR_PARTITION_RECORD));
 		if (STATUS == EFI_SUCCESS)
 		{
 			BlockIoProtocol = DiskDevices[DiskIndex]->BlockIo;
