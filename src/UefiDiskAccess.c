@@ -535,15 +535,15 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	{
 		//PartitionTypeGUID = PartitionInfo->Info->Gpt->PartitionTypeGUID;
 		//UniquePartitionGUID = PartitionInfo->Info->Gpt->UniquePartitionGUID;
-		StartingLBA = PartitionInfo->Info.Gpt->StartingLBA;
-		EndingLBA = PartitionInfo->Info.Gpt->EndingLBA;
+		StartingLBA = PartitionInfo->Info.Gpt.StartingLBA;
+		EndingLBA = PartitionInfo->Info.Gpt.EndingLBA;
 		SizeInLBA = EndingLBA - StartingLBA + 1;
 	}
 
 	if (DevicePathMask->SignatureType = 1 && DevicePathMask->MBRType == PartitionInfo->Type)
 	{
-		StartingLBA = (EFI_LBA)PartitionInfo->Info.Mbr->StartingLBA;
-		SizeInLBA = (EFI_LBA)PartitionInfo->Info.Mbr->SizeInLBA;
+		StartingLBA = (EFI_LBA)PartitionInfo->Info.Mbr.StartingLBA;
+		SizeInLBA = (EFI_LBA)PartitionInfo->Info.Mbr.SizeInLBA;
 		EndingLBA = StartingLBA + SizeInLBA - 1;
 	}
 
