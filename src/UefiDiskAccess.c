@@ -472,7 +472,7 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID
 EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 {
 	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
-	EFI_LBA LastBlock;
+	//EFI_LBA LastBlock;
 	EFI_LBA StartingLBA;
 	EFI_LBA EndingLBA;
 	EFI_LBA SizeInLBA;
@@ -533,8 +533,8 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 
 	if (DevicePathMask->SignatureType == 2 && DevicePathMask->MBRType == PartitionInfo->Type)
 	{
-		//PartitionTypeGUID = PartitionInfo->Info->Gpt->PartitionTypeGUID;
-		//UniquePartitionGUID = PartitionInfo->Info->Gpt->UniquePartitionGUID;
+		PartitionTypeGUID = PartitionInfo->Info->Gpt->PartitionTypeGUID;
+		UniquePartitionGUID = PartitionInfo->Info->Gpt->UniquePartitionGUID;
 		StartingLBA = PartitionInfo->Info.Gpt.StartingLBA;
 		EndingLBA = PartitionInfo->Info.Gpt.EndingLBA;
 		SizeInLBA = EndingLBA - StartingLBA + 1;
