@@ -205,7 +205,7 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, IN UINTN MbrPartInde
 				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DevicePath;
 				DevicePath = NextDevicePathNode(DevicePath);
 			}
-			if (DevicePath->PartitionNumber == MbrPartIndex)
+			if (DevicePathMask->PartitionNumber == MbrPartIndex)
 			{
 				DevicePath = DiskDevices[DiskIndex]->DevicePath;
 				return EFI_SUCCESS;
@@ -231,7 +231,7 @@ EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, IN UINTN GptPartIndex
 				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DevicePath;
 				DevicePath = NextDevicePathNode(DevicePath);
 			}
-			if (DevicePath->PartitionNumber == GptPartIndex)
+			if (DevicePathMask->PartitionNumber == GptPartIndex)
 			{
 				DevicePath = DiskDevices[DiskIndex]->DevicePath;
 				return EFI_SUCCESS;
@@ -486,7 +486,7 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	//EFI_BLOCK_IO_PROTOCOL *BlockIO = DiskDevice->BlockIo;
 	EFI_PARTITION_INFO_PROTOCOL *PartitionInfo = DiskDevice->PartInfo;
 	UINTN MBRType;
-	
+
 	if (!DevicePath)
 	{
 		return EFI_INVALID_PARAMETER;
