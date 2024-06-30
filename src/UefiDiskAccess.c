@@ -210,7 +210,6 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, OUT EFI_DEVICE_PATH_
 EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN DiskIndex)
 {
 	EFI_STATUS STATUS;
-	UINTN DiskIndex;
 	//EFI_LBA StartingLBA;
 	//EFI_LBA EndingLBA;
 	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
@@ -233,7 +232,6 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN Is
 	MBR_PARTITION_RECORD *MbrPart;
 	UINT32 StartingLBA, SizeInLBA, EndingLBA;
 	CHAR16 ScaledStart[32], ScaledEnd[32], ScaledSize[32];
-	EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol;
 	EFI_DEVICE_PATH_PROTOCOL *DevicePath;
 	UINTN MbrPartIndex;
 	UINTN DiskIndex;
@@ -308,6 +306,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 	UINTN GptPartIndex;
 	UINTN DiskIndex;
 
+	StartLBA = 
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, StartLBA, BlockIoProtocol->Media->BlockSize, GptHeader);
 	if (STATUS == EFI_SUCCESS)
 	{
