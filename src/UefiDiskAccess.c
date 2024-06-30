@@ -236,7 +236,7 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA My
 	UINTN MbrPartIndex;
 	UINTN DiskIndex;
 
-	IsGpt = 0;
+	MyLBA = 0;
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, 0, BlockIoProtocol->Media->BlockSize, MBRContent);
 	if (STATUS == EFI_SUCCESS)
 	{
@@ -255,7 +255,7 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA My
 				EndingLBA = (StartingLBA + SizeInLBA - 1);
 				if (MbrPart->OSIndicator == PMBR_GPT_PARTITION || MbrPart->OSIndicator == EFI_PARTITION)
 				{
-					IsGpt = StartingLBA;
+					MyLBA = StartingLBA;
 				}
 				else
 				{
@@ -305,6 +305,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 	VOID *PartitionEntries;
 	UINTN GptPartIndex;
 	UINTN DiskIndex;
+	CHAR16 ScaledStart[32], ScaledEnd[32], ScaledSize[32];
 
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, MyLBA, BlockIoProtocol->Media->BlockSize, GptHeader);
 	if (STATUS == EFI_SUCCESS)
