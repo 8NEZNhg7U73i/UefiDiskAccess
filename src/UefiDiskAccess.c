@@ -299,50 +299,50 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA My
 EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA)
 {
 	EFI_STATUS STATUS;
-	EFI_PARTITION_TABLE_HEADER *GptHeader;
+	EFI_PARTITION_TABLE_HEADER *PartitionHeader;
 	EFI_PARTITION_ENTRY *PartitionEntry;
 	UINT32 PartitionEntrySize;
 	VOID *PartitionEntries;
-	UINTN GptPartIndex;
+	UINTN PartitionIndex;
 	UINTN DiskIndex;
 	CHAR16 ScaledStart[32], ScaledEnd[32], ScaledSize[32];
 
-	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, MyLBA, BlockIoProtocol->Media->BlockSize, GptHeader);
+	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, MyLBA, BlockIoProtocol->Media->BlockSize, PartitionHeader);
 	if (STATUS == EFI_SUCCESS)
 	{
-		if (GptHeader->Header.Signature != EFI_PTAB_HEADER_ID)
+		if (PartitionHeader->Header.Signature != EFI_PTAB_HEADER_ID)
 		{
 			Print(L"Improper GPT Header Signature!");
 			return EFI_DEVICE_ERROR;
 		}
 		else
 		{
-			Print(L"GPT Header Detected! First usable LBA: %u. Last usable LBA: %u.\n", GptHeader->FirstUsableLBA, GptHeader->LastUsableLBA);
-			PartitionEntrySize = GptHeader->SizeOfPartitionEntry * GptHeader->NumberOfPartitionEntries;
+			Print(L"GPT Header Detected! First usable LBA: %u. Last usable LBA: %u.\n", PartitionHeader->FirstUsableLBA, PartitionHeader->LastUsableLBA);
+			PartitionEntrySize = PartitionHeader->SizeOfPartitionEntry * PartitionHeader->NumberOfPartitionEntries;
 			PartitionEntries = AllocatePool(PartitionEntrySize);
-			Print(L"Disk GUID: {%g} Max number of partitions: %u\n", &GptHeader->DiskGUID, GptHeader->NumberOfPartitionEntries);
+			Print(L"Disk GUID: {%g} Max number of partitions: %u\n", &PartitionHeader->DiskGUID, PartitionHeader->NumberOfPartitionEntries);
 			if (PartitionEntries)
 			{
-				STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, GptHeader->PartitionEntryLBA, PartitionEntrySize, PartitionEntries);
+				STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, PartitionHeader->PartitionEntryLBA, PartitionEntrySize, PartitionEntries);
 				if (STATUS == EFI_SUCCESS)
 				{
-					for (GptPartIndex = 0; GptPartIndex < GptHeader->NumberOfPartitionEntries; GptPartIndex++)
+					for (PartitionIndex = 0; PartitionIndex < PartitionHeader->NumberOfPartitionEntries; PartitionIndex++)
 					{
-						PartitionEntry = (EFI_PARTITION_ENTRY *)((UINTN)PartitionEntries + GptPartIndex * GptHeader->SizeOfPartitionEntry);
+						PartitionEntry = (EFI_PARTITION_ENTRY *)((UINTN)PartitionEntries + PartitionIndex * PartitionHeader->SizeOfPartitionEntry);
 						if (EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeUnusedGuid))
 						{
 							DisplaySize(MultU64x32(PartitionEntry->StartingLBA, BlockIoProtocol->Media->BlockSize), ScaledStart, sizeof(ScaledStart));
 							DisplaySize(MultU64x32(PartitionEntry->EndingLBA, BlockIoProtocol->Media->BlockSize), ScaledEnd, sizeof(ScaledEnd));
 							DisplaySize(MultU64x32(PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
-							STATUS = FindMbrBlockDevice(MbrPart, DevicePath, DiskIndex);
+							STATUS = FindGptBlockDevice(PartitionEntry, DevicePath, DiskIndex);
 							if (STATUS == EFI_SUCCESS)
 							{
-								Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", GptPartIndex, DiskIndex, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
+								Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", PartitionIndex, DiskIndex, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
 								break;
 							}
 							else
 							{
-								Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", GptPartIndex , PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
+								Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", PartitionIndex , PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
 								break;
 							}
 						}
@@ -378,7 +378,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 		Print(L"Failed to read GPT Header! STATUS=0x%r\n", STATUS);
 		return EFI_OUT_OF_RESOURCES;
 	}
-	FreePool(GptHeader);
+	FreePool(PartitionHeader);
 }
 
 
