@@ -225,7 +225,7 @@ EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_DEVICE_PATH_P
 	return EFI_DEVICE_ERROR;
 }
 
-EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN IsGpt)
+EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA MyLBA)
 {
 	EFI_STATUS STATUS;
 	MASTER_BOOT_RECORD *MBRContent;
@@ -236,7 +236,7 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN Is
 	UINTN MbrPartIndex;
 	UINTN DiskIndex;
 
-	IsGpt = FALSE;
+	IsGpt = 0;
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, 0, BlockIoProtocol->Media->BlockSize, MBRContent);
 	if (STATUS == EFI_SUCCESS)
 	{
@@ -255,7 +255,7 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN Is
 				EndingLBA = (StartingLBA + SizeInLBA - 1);
 				if (MbrPart->OSIndicator == PMBR_GPT_PARTITION || MbrPart->OSIndicator == EFI_PARTITION)
 				{
-					IsGpt = TRUE;
+					IsGpt = StartingLBA;
 				}
 				else
 				{
@@ -296,7 +296,7 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN Is
 	FreePool(MBRContent);
 }
 
-EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
+EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA)
 {
 	EFI_STATUS STATUS;
 	EFI_PARTITION_TABLE_HEADER *GptHeader;
@@ -306,8 +306,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 	UINTN GptPartIndex;
 	UINTN DiskIndex;
 
-	StartLBA = 
-	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, StartLBA, BlockIoProtocol->Media->BlockSize, GptHeader);
+	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, MyLBA, BlockIoProtocol->Media->BlockSize, GptHeader);
 	if (STATUS == EFI_SUCCESS)
 	{
 		if (GptHeader->Header.Signature != EFI_PTAB_HEADER_ID)
@@ -389,10 +388,10 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 	BOOLEAN IsGpt;
 	if (!BlockIoProtocol->Media->LogicalPartition)
 	{
-		STATUS = EnumMbrDisk(BlockIoProtocol, IsGpt);
-		if (IsGpt)
+		STATUS = EnumMbrDisk(BlockIoProtocol, MyLBA);
+		if (!MyLBA)
 		{
-			STATUS = EnumGptDisk(BlockIoProtocol);
+			STATUS = EnumGptDisk(BlockIoProtocol, MyLBA);
 		}
 	}
 }
