@@ -485,7 +485,8 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	EFI_DEVICE_PATH_PROTOCOL *DevicePath = DiskDevice->DevicePath;
 	//EFI_BLOCK_IO_PROTOCOL *BlockIO = DiskDevice->BlockIo;
 	EFI_PARTITION_INFO_PROTOCOL *PartitionInfo = DiskDevice->PartInfo;
-
+	UINTN MBRType;
+	
 	if (!DevicePath)
 	{
 		return EFI_INVALID_PARAMETER;
