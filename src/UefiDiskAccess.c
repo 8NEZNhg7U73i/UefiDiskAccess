@@ -403,7 +403,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 {
 	EFI_STATUS STATUS;
-	EFI_LBA MyLBA;
+	EFI_LBA MyLBA=0;
 	if (!BlockIoProtocol->Media->LogicalPartition)
 	{
 		STATUS = EnumMbrDisk(BlockIoProtocol, MyLBA);
@@ -412,6 +412,7 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 			STATUS = EnumGptDisk(BlockIoProtocol, MyLBA);
 		}
 	}
+	return STATUS;
 }
 
 void EnumAllDiskPartitions()
@@ -587,6 +588,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				Print(L"StrPath: %s\n", StrPath);
 				Print(L"gEfiPartitionInfoProtocolGuid:%r\n", STATUS);
 				Print(L"Type:%d\n", DiskDevices[DiskDeviceIndex]->PartInfo->Type);
+				//Print(L"DiskIoProtocol: %r\n", STATUS);
 				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[DiskDeviceIndex], NULL);
 				if (DiskDevices[DiskDeviceIndex]->BlockIo->Media->MediaPresent && !DiskDevices[DiskDeviceIndex]->BlockIo->Media->LogicalPartition)
 				{
