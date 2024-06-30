@@ -540,7 +540,7 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 		SizeInLBA = EndingLBA - StartingLBA + 1;
 	}
 
-	if (DevicePathMask->SignatureType = 1 && DevicePathMask->MBRType == PartitionInfo->Type)
+	if ((DevicePathMask->SignatureType = 1) && (DevicePathMask->MBRType == PartitionInfo->Type))
 	{
 		StartingLBA = (EFI_LBA)PartitionInfo->Info.Mbr.StartingLBA;
 		SizeInLBA = (EFI_LBA)PartitionInfo->Info.Mbr.SizeInLBA;
