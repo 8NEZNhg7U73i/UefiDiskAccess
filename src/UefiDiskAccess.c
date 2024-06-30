@@ -189,10 +189,9 @@ void DisplaySize(IN UINT64 Size, OUT CHAR16 *Buffer, IN UINTN Limit)
 		UnicodeSPrint(Buffer, Limit, L"%u GiB", Size >> 30);
 }
 
-EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, OUT EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
+EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN DiskIndex)
 {
 	EFI_STATUS STATUS;
-	UINTN DiskIndex;
 	//EFI_LBA StartingLBA;
 	//EFI_LBA	EndingLBA;
 	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
@@ -200,13 +199,15 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, OUT EFI_BLOCK_IO_PRO
 		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
 		if (STATUS == EFI_SUCCESS)
 		{
-			BlockIoProtocol = DiskDevices[DiskIndex]->BlockIo;
+			DevicePath = DiskDevices[DiskIndex]->DevicePath;
+			DiskIndex = DiskIndex;
 			return EFI_SUCCESS;
 		}
 	}
+	return EFI_DEVICE_ERROR;
 }
 
-EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
+EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN DiskIndex)
 {
 	EFI_STATUS STATUS;
 	UINTN DiskIndex;
@@ -214,13 +215,16 @@ EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_BLOCK_IO_PROT
 	//EFI_LBA EndingLBA;
 	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
-		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Gpt, Gpt, sizeof(MBR_PARTITION_RECORD));
+		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Gpt, Gpt, sizeof(EFI_PARTITION_ENTRY));
 		if (STATUS == EFI_SUCCESS)
 		{
-			BlockIoProtocol = DiskDevices[DiskIndex]->BlockIo;
+			DevicePath = DiskDevices[DiskIndex]->DevicePath;
+			DiskIndex = DiskIndex;
 			return EFI_SUCCESS;
 		}
-	}}
+	}
+	return EFI_DEVICE_ERROR;
+}
 
 EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN IsGpt)
 {
@@ -229,8 +233,10 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN Is
 	MBR_PARTITION_RECORD *MbrPart;
 	UINT32 StartingLBA, SizeInLBA, EndingLBA;
 	CHAR16 ScaledStart[32], ScaledEnd[32], ScaledSize[32];
-	EFI_BLOCO_IO_PROTOCOL *BlockIoProtocol;
+	EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol;
+	EFI_DEVICE_PATH_PROTOCOL *DevicePath;
 	UINTN MbrPartIndex;
+	UINTN DiskIndex;
 
 	IsGpt = FALSE;
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, 0, BlockIoProtocol->Media->BlockSize, MBRContent);
@@ -246,9 +252,9 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN Is
 			MbrPart = &MBRContent->Partition[MbrPartIndex];
 			if (MbrPart->OSIndicator)
 			{
-				UINT32 StartingLBA = *(UINT32 *)MbrPart->StartingLBA;
-				UINT32 SizeInLBA = *(UINT32 *)MbrPart->SizeInLBA;
-				UINT32 EndingLBA = (StartingLBA + SizeInLBA - 1);
+				StartingLBA = *(UINT32 *)MbrPart->StartingLBA;
+				SizeInLBA = *(UINT32 *)MbrPart->SizeInLBA;
+				EndingLBA = (StartingLBA + SizeInLBA - 1);
 				if (MbrPart->OSIndicator == PMBR_GPT_PARTITION || MbrPart->OSIndicator == EFI_PARTITION)
 				{
 					IsGpt = TRUE;
@@ -258,31 +264,38 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN Is
 					DisplaySize(__emulu(StartingLBA, BlockIoProtocol->Media->BlockSize), ScaledStart, sizeof(ScaledStart));
 					DisplaySize(__emulu(EndingLBA, BlockIoProtocol->Media->BlockSize), ScaledEnd, sizeof(ScaledEnd));
 					DisplaySize(__emulu(SizeInLBA, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
-					STATUS = FindMbrBlockDevice(MbrPart, BlockIoProtocol);
+					STATUS = FindMbrBlockDevice(MbrPart, DevicePath, DiskIndex);
 					if (STATUS == EFI_SUCCESS)
 					{
 						if (SizeInLBA == 0xFFFFFFFF)
 						{
-							Print(L"MBR Part %d, Block Device %d : StartLBA: %u EndLBA: %s OS Type: 0x%02X Size: Over 2TiB\n", MbrPartIndex, k, StartingLBA, EndingLBA, MbrPart->OSIndicator);
+							Print(L"MBR Part %d, Block Device %d : StartLBA: %u EndLBA: %s OS Type: 0x%02X Size: Over 2TiB\n", MbrPartIndex, DiskIndex , StartingLBA, EndingLBA, MbrPart->OSIndicator);
 						}
 						else
 						{
-							Print(L"MBR Part %d, Block Device %d : StartLBA: %u EndLBA: %u LBASize: %u OS Type: 0x%02X Size: %s\n", MbrPartIndex, k, StartingLBA, EndingLBA, SizeInLBA, ScaledSize, MbrPart->OSIndicator);
+							Print(L"MBR Part %d, Block Device %d : StartLBA: %u EndLBA: %u LBASize: %u OS Type: 0x%02X Size: %s\n", MbrPartIndex, DiskIndex, StartingLBA, EndingLBA, SizeInLBA, ScaledSize, MbrPart->OSIndicator);
 						}
 					}
-					if (SizeInLBA == 0xFFFFFFFF)
-					{
-						Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %s Size: Over 2TiB\n", MbrPartIndex, MbrPart->OSIndicator, StartingLBA, ScaledEnd);
-					}
-					else
-					{
-						Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", MbrPartIndex, MbrPart->OSIndicator, StartingLBA, EndingLBA, SizeInLBA, ScaledSize);
+					else {
+						if (SizeInLBA == 0xFFFFFFFF)
+						{
+							Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %s Size: Over 2TiB\n", MbrPartIndex, MbrPart->OSIndicator, StartingLBA, ScaledEnd);
+						}
+						else
+						{
+							Print(L"MBR Part %d: OS Type: 0x%02X StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", MbrPartIndex, MbrPart->OSIndicator, StartingLBA, EndingLBA, SizeInLBA, ScaledSize);
+						}
 					}
 				}
 			}
 		}
 	}
-	return STATUS;
+	else
+	{
+		Print(L"Failed to read MBR Header! STATUS=0x%r\n", STATUS);
+		return EFI_OUT_OF_RESOURCES;
+	}
+	FreePool(MBRContent);
 }
 
 EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
@@ -290,7 +303,10 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 	EFI_STATUS STATUS;
 	EFI_PARTITION_TABLE_HEADER *GptHeader;
 	EFI_PARTITION_ENTRY *PartitionEntry;
-	UINT32 
+	UINT32 PartitionEntrySize;
+	VOID *PartitionEntries;
+	UINTN GptPartIndex;
+	UINTN DiskIndex;
 
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, StartLBA, BlockIoProtocol->Media->BlockSize, GptHeader);
 	if (STATUS == EFI_SUCCESS)
@@ -303,73 +319,68 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 		else
 		{
 			Print(L"GPT Header Detected! First usable LBA: %u. Last usable LBA: %u.\n", GptHeader->FirstUsableLBA, GptHeader->LastUsableLBA);
-			UINT32 PartitionEntrySize = GptHeader->SizeOfPartitionEntry * GptHeader->NumberOfPartitionEntries;
-			VOID *PartitionEntries = AllocatePool(PartitionEntrySize);
+			PartitionEntrySize = GptHeader->SizeOfPartitionEntry * GptHeader->NumberOfPartitionEntries;
+			PartitionEntries = AllocatePool(PartitionEntrySize);
 			Print(L"Disk GUID: {%g} Max number of partitions: %u\n", &GptHeader->DiskGUID, GptHeader->NumberOfPartitionEntries);
 			if (PartitionEntries)
 			{
 				STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, GptHeader->PartitionEntryLBA, PartitionEntrySize, PartitionEntries);
 				if (STATUS == EFI_SUCCESS)
 				{
-					for (UINT32 j = 0; j < GptHeader->NumberOfPartitionEntries; j++)
+					for (GptPartIndex = 0; GptPartIndex < GptHeader->NumberOfPartitionEntries; GptPartIndex++)
 					{
-						PartitionEntry = (EFI_PARTITION_ENTRY *)((UINTN)PartitionEntries + j * GptHeader->SizeOfPartitionEntry);
+						PartitionEntry = (EFI_PARTITION_ENTRY *)((UINTN)PartitionEntries + GptPartIndex * GptHeader->SizeOfPartitionEntry);
 						if (EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeUnusedGuid))
 						{
 							DisplaySize(MultU64x32(PartitionEntry->StartingLBA, BlockIoProtocol->Media->BlockSize), ScaledStart, sizeof(ScaledStart));
 							DisplaySize(MultU64x32(PartitionEntry->EndingLBA, BlockIoProtocol->Media->BlockSize), ScaledEnd, sizeof(ScaledEnd));
 							DisplaySize(MultU64x32(PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
-							for (UINT32 k = 0; k < NumberOfDiskDevices; k++)
+							STATUS = FindMbrBlockDevice(MbrPart, DevicePath, DiskIndex);
+							if (STATUS == EFI_SUCCESS)
 							{
-								if (DiskDevices[k].DevicePath)
-								{
-									STATUS = FindGptSignature(DiskDevices[k].DevicePath, &PartitionEntry->UniquePartitionGUID);
-									if (STATUS == EFI_SUCCESS)
-									{
-										Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", j, k, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
-										break;
-									}
-									if (k == NumberOfDiskDevices - 1)
-									{
-										Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", j, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
-										break;
-									}
-								}
-							}
-							if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid))
-							{
-								Print(L"Part Type : efi\n");
-							}
-							else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsReservedPartGuid))
-							{
-								Print(L"Part Type : msr\n");
-							}
-							else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeBasicDataPartGuid))
-							{
-								Print(L"Part Type : data\n");
-							}
-							else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsRecoveryPartGuid))
-							{
-								Print(L"Part Type : wre\n");
+								Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", GptPartIndex, DiskIndex, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
+								break;
 							}
 							else
 							{
-								Print(L"Part Type GUID:    {%g}\n", &PartitionEntry->PartitionTypeGUID);
+								Print(L"GPT Part %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", GptPartIndex , PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
+								break;
 							}
-							Print(L"Unique Part GUID:  {%g}\n", &PartitionEntry->UniquePartitionGUID);
 						}
 					}
+					if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeSystemPartGuid))
+					{
+						Print(L"Part Type : efi\n");
+					}
+					else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsReservedPartGuid))
+					{
+						Print(L"Part Type : msr\n");
+					}
+					else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeBasicDataPartGuid))
+					{
+						Print(L"Part Type : data\n");
+					}
+					else if (!EfiCompareGuid(&PartitionEntry->PartitionTypeGUID, &gEfiPartTypeMsRecoveryPartGuid))
+					{
+						Print(L"Part Type : wre\n");
+					}
+					else
+					{
+						Print(L"Part Type GUID:    {%g}\n", &PartitionEntry->PartitionTypeGUID);
+					}
+					Print(L"Unique Part GUID:  {%g}\n", &PartitionEntry->UniquePartitionGUID);
 				}
-				FreePool(PartitionEntries);
 			}
+			FreePool(PartitionEntries);
 		}
 	}
-		else
-		{
-			Print(L"Failed to read GPT Header! STATUS=0x%r\n", STATUS);
-		}
-		FreePool(GptHeader);
+	else
+	{
+		Print(L"Failed to read GPT Header! STATUS=0x%r\n", STATUS);
+		return EFI_OUT_OF_RESOURCES;
 	}
+	FreePool(GptHeader);
+}
 
 
 
