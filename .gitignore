@@ -54,3 +54,4 @@ dkms.conf
 
 # Miscellaneous
 *.cod
+.vscode/settings.json
