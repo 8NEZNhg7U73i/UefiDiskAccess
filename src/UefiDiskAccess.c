@@ -222,7 +222,7 @@ EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, OUT EFI_BLOCK_IO_PROT
 		}
 	}}
 
-EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN IsGpt);
+EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT BOOLEAN IsGpt)
 {
 	EFI_STATUS STATUS;
 	MASTER_BOOT_RECORD *MBRContent;
@@ -441,8 +441,8 @@ EFI_STATUS FindGptSignature(CONST EFI_DEVICE_PATH_PROTOCOL *DevicePath, EFI_GUID
 }
 */
 
-//EFI_STATUS DevicePathConvert(CONST IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, IN EFI_BLOCK_IO_PROTOCOL *BlockIo, IN EFI_PARTITION_INFORMATION_PROTOCOL *PartitionInfo)
-EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevices)
+//EFI_STATUS DevicePathConvert(CONST IN EFI_DEVICE_PATH_PROTOCOL *DevicePath, IN EFI_BLOCK_IO_PROTOCOL *BlockIo, IN EFI_PARTITION_INFO_PROTOCOL *PartitionInfo)
+EFI_STATUS DevicePathConvert(IN *DiskDevices)
 {
 	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
 	EFI_LBA LastBlock;
@@ -457,7 +457,7 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevices)
 	BOOLEAN IsDisk;
 	EFI_DEVICE_PATH_PROTOCOL *DevicePath = DiskDevices->DevicePath;
 	//EFI_BLOCK_IO_PROTOCOL *BlockIO = DiskDevices->BlockIo;
-	EFI_PARTITION_INFORMATION_PROTOCOL *PartitionInfo = DiskDevices->PartInfo;
+	EFI_PARTITION_INFO_PROTOCOL *PartitionInfo = DiskDevices->PartInfo;
 
 	if (!DevicePath)
 	{
@@ -502,7 +502,7 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevices)
 	//Extract Partition Info Protocol useful data
 	Type = PartitionInfo->Type;
 
-	if (DevicePathMask->SignatureType = 2 && DevicePathMask->Type == PartitionInfo->Type)
+	if (DevicePathMask->SignatureType = 2 && DevicePathMask->SignatureType == PartitionInfo->Type)
 	{
 		//PartitionTypeGUID = PartitionInfo->Info->Gpt->PartitionTypeGUID;
 		//UniquePartitionGUID = PartitionInfo->Info->Gpt->UniquePartitionGUID;
