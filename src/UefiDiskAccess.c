@@ -430,7 +430,7 @@ void EnumAllDiskPartitions()
 		{
 			DiskDevices[DiskIndex]->DevicePath = DevicePathFromHandle(HandleBuffer[DiskIndex]);
 			gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, &DiskDevices[DiskIndex]->BlockIo);
-			gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);	for (DiskIndex = 0; DiskIndex < NumberOfDiskDevices; DiskIndex++)
+			gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);	for (DiskIndex = 0; DiskIndex < NumberOfDiskDevices; DiskIndex++);
 		}
 	}
 
