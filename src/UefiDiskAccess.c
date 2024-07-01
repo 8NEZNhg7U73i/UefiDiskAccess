@@ -581,6 +581,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 		if (DiskDevices)
 		{
 			NumberOfDiskDevices = BuffCount;
+			Print(L"NumberOfDiskDevices: %d\n", NumberOfDiskDevices);
 			for (DiskIndex = 0; DiskIndex < BuffCount; DiskIndex++)
 			{
 				DiskDevices[DiskIndex]->DevicePath = DevicePathFromHandle(HandleBuffer[DiskIndex]);
