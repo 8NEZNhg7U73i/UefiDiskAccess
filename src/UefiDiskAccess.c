@@ -622,7 +622,6 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				{
 					Print(L"LogicalPartition :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
 				}
-			{
 				/*
 				if (HandleBuffer[DiskIndex] == CurrentImage->DeviceHandle)
 				{
