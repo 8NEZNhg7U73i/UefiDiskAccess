@@ -306,7 +306,7 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA My
 	}
 	else
 	{
-		Print(L"Failed to read MBR Header! STATUS=0x%r\n", STATUS);
+		Print(L"Failed to read MBR Header! STATUS=%r\n", STATUS);
 		return EFI_OUT_OF_RESOURCES;
 	}
 	FreePool(MBRContent);
@@ -391,7 +391,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 	}
 	else
 	{
-		Print(L"Failed to read GPT Header! STATUS=0x%r\n", STATUS);
+		Print(L"Failed to read GPT Header! STATUS=%r\n", STATUS);
 		return EFI_OUT_OF_RESOURCES;
 	}
 	FreePool(PartitionHeader);
