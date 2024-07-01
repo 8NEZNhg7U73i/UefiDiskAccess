@@ -490,21 +490,12 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	UINTN MBRType;
 	UINTN Type;
 
-	if (!DevicePath)
+	if (!DiskDevice)
 	{
 		return EFI_INVALID_PARAMETER;
 	}
 	//CHAR16 *DevPath;
 
-	if (PartitionInfo && DevicePath->SignatureType)
-	{
-		IsDisk = TRUE;
-		return EFI_SUCCESS;
-	}
-	else
-	{
-		IsDisk = FALSE;
-	}
 	
 	//DevPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 	//Print(L"DevPath: %s\n", DevPath);
@@ -516,11 +507,22 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	}
 	// DevPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 	// Print(L"DevPath: %s\n", DevPath);
+	
 	if (DevicePathMask->Header.Type != MEDIA_DEVICE_PATH)
 	{
 		return EFI_DEVICE_ERROR;
 	}
 
+	if (PartitionInfo && DevicePath->SignatureType)
+	{
+		IsDisk = TRUE;
+		return EFI_SUCCESS;
+	}
+	else
+	{
+		IsDisk = FALSE;
+	}
+	
 	//Extract Device Path Protocol useful data
 	SignatureType = DevicePathMask->SignatureType;
 	PartitionNumber = DevicePathMask->PartitionNumber;
