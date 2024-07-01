@@ -1235,7 +1235,7 @@ PartitionInstallChildHandle (
   //
   // Create the new handle.
   //
-
+  Print(L"LogicalPartition00 :%d\n", ParentBlockIo->Media->LogicalPartition);
   Print(L"PartitionNumber: %d\n", ((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber);
   Print(L"Private->PartitionInfo: %p\n", Private->PartitionInfo);
   Print(L"Type:%d\n", Private->PartitionInfo.Type);
@@ -1251,6 +1251,7 @@ PartitionInstallChildHandle (
   Print(L"ControllerHandle: %p\n", EntryBuffer[((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber].ControllerHandle);
   Status = gBS->HandleProtocol(EntryBuffer[((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber].ControllerHandle, &gEfiPartitionInfoProtocolGuid, &PartitionInfo);
   Print(L"HandleProtocol: %r\n", Status);
+  Print(L"LogicalPartition11 :%d\n", ParentBlockIo->Media->LogicalPartition);
 
 /*
   Private->Handle = NULL;
