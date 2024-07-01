@@ -419,19 +419,22 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 void EnumAllDiskPartitions()
 {
 	UINTN DiskIndex;
+	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
+	UINTN BuffCount = 0;
+	EFI_HANDLE *HandleBuffer = NULL;
+	gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BuffCount, &HandleBuffer);
 	DiskDevices = AllocateZeroPool(sizeof(DISK_DEVICE_OBJECT) * BuffCount);
-	//DiskDevices = * (DISK_DEVICE_OBJECT**)DiskDevices;
 	if (DiskDevices)
 	{
 		NumberOfDiskDevices = BuffCount;
 		for (DiskIndex = 0; DiskIndex < BuffCount; DiskIndex++)
 		{
 			DiskDevices[DiskIndex]->DevicePath = DevicePathFromHandle(HandleBuffer[DiskIndex]);
-			STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, &DiskDevices[DiskIndex]->BlockIo);
-			STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);	for (DiskIndex = 0; DiskIndex < NumberOfDiskDevices; DiskIndex++)
+			gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, &DiskDevices[DiskIndex]->BlockIo);
+			gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);	for (DiskIndex = 0; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 		}
 	}
-	
+
 	{
 		// Skip absent media and partition media.
 		Print(L"MediaPresent: %d\n", DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent);
