@@ -582,7 +582,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 	if (DISKSTATUS == EFI_SUCCESS)
 	{
 		*DiskDevices = AllocateZeroPool(sizeof(DISK_DEVICE_OBJECT) * BuffCount);
-		DiskDevices = *DiskDevices;
+		DiskDevices = * (DISK_DEVICE_OBJECT)DiskDevices;
 		if (DiskDevices)
 		{
 			NumberOfDiskDevices = BuffCount;
