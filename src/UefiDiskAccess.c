@@ -617,6 +617,9 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					//Print(L"PartInfo1: %r\n", STATUS);
 					Print(L"\n");
 				}
+				DiskDevices[DiskIndex]->DevicePath = DevicePathFromHandle(HandleBuffer[DiskIndex]);
+				STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, &DiskDevices[DiskIndex]->BlockIo);
+				STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);
 				Print(L"\n");
 				/*
 				if (HandleBuffer[DiskIndex] == CurrentImage->DeviceHandle)
