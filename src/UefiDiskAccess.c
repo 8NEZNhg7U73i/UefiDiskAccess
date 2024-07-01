@@ -623,7 +623,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					//Print(L"Type:%d\n", (DiskDevices[DiskIndex]->PartInfo)->Type);
 					//STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);
 					//Print(L"PartInfo1: %r\n", STATUS);
-					Print(L"LogicalPartition0 :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
+					Print(L"LogicalPartition1 :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
 					Print(L"\n");
 				}
 				Print(L"\n");
