@@ -421,8 +421,6 @@ void EnumAllDiskPartitions()
 	for (DiskIndex = 0; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
 		// Skip absent media and partition media.
-		Print(L"MediaPresent :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent);
-		Print(L"LogicalPartition :%d\n", !DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
 		if (DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent && !DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition)
 		{
 			CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[DiskIndex]->DevicePath, FALSE, FALSE);
@@ -594,7 +592,6 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				Print(L"Type:%d\n", DiskDevices[DiskIndex]->PartInfo->Type);
 				//Print(L"DiskIoProtocol: %r\n", STATUS);
 				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[DiskIndex], NULL);
-				Print(L"MediaPresent :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent);
 				Print(L"LogicalPartition :%d\n", !DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
 				if (DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent && !DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition)
 				{

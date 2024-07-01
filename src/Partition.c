@@ -1251,7 +1251,6 @@ PartitionInstallChildHandle (
   Print(L"ControllerHandle: %p\n", EntryBuffer[((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber].ControllerHandle);
   Status = gBS->HandleProtocol(EntryBuffer[((HARDDRIVE_DEVICE_PATH *)DevicePathNode)->PartitionNumber].ControllerHandle, &gEfiPartitionInfoProtocolGuid, &PartitionInfo);
   Print(L"HandleProtocol: %r\n", Status);
-  Print(L"LogicalPartition :%d\n", ParentBlockIo->Media->LogicalPartition);
 
 /*
   Private->Handle = NULL;
