@@ -197,7 +197,7 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, IN UINTN MbrPartInde
 	//EFI_LBA	EndingLBA;
 	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
-		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
+		STATUS = CompareMem(DiskDevices[DiskIndex]->PartInfo->Info.Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
 		if (STATUS == EFI_SUCCESS)
 		{
 			while (!IsDevicePathEnd(DiskDevices[DiskIndex]->DevicePath))
@@ -223,7 +223,7 @@ EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, IN UINTN GptPartIndex
 	//EFI_LBA EndingLBA;
 	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
-		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Gpt, Gpt, sizeof(EFI_PARTITION_ENTRY));
+		STATUS = CompareMem(DiskDevices[DiskIndex]->PartInfo->Info.Gpt, Gpt, sizeof(EFI_PARTITION_ENTRY));
 		if (STATUS == EFI_SUCCESS)
 		{
 			while (!IsDevicePathEnd(DiskDevices[DiskIndex]->DevicePath))
@@ -584,8 +584,8 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 			for (DiskIndex = 0; DiskIndex < BuffCount; DiskIndex++)
 			{
 				DiskDevices[DiskIndex]->DevicePath = DevicePathFromHandle(HandleBuffer[DiskIndex]);
-				STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, &DiskDevices[DiskIndex]->BlockIo);
-				STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);
+				STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, DiskDevices[DiskIndex]->BlockIo);
+				STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, DiskDevices[DiskIndex]->PartInfo);
 				StrPath = ConvertDevicePathToText(DiskDevices[DiskIndex]->DevicePath, FALSE, FALSE);
 				Print(L"BlockIo: %d\n", DiskIndex);
 				Print(L"StrPath: %s\n", StrPath);
@@ -613,7 +613,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					Print (L"PartitionInstallMbrChildHandles: %r\n", STATUS);
 					//if (STATUS == EFI_SUCCESS)
 					//Print(L"Type:%d\n", (DiskDevices[DiskIndex]->PartInfo)->Type);
-					//STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);
+					//STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, DiskDevices[DiskIndex]->PartInfo);
 					//Print(L"PartInfo1: %r\n", STATUS);
 					Print(L"\n");
 				}
@@ -628,7 +628,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					CHAR16 *DevPath = ConvertDevicePathToText(DiskDevices[DiskIndex]->DevicePath, FALSE, FALSE);
 					if (DevPath)
 					{
-						// CurrentName = gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[DiskIndex]->DevicePath);
+						// CurrentName = gEfiShellProtocol->GetMapFromDevicePath(DiskDevices[DiskIndex]->DevicePath);
 						// CHAR16 *MapName = StrnCatGrow(&MapName, 0, CurrentName, 0);
 						// Print(L"Image was loaded from map: %s, Disk Device: %s\r\n", MapName, DevPath);
 						Print(L"Image was loaded from: %s\r\n", DevPath);
