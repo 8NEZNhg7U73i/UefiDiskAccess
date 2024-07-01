@@ -419,7 +419,6 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 void EnumAllDiskPartitions()
 {
 	UINTN DiskIndex;
-	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 	UINTN BuffCount = 0;
 	EFI_HANDLE *HandleBuffer = NULL;
 	gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BuffCount, &HandleBuffer);
