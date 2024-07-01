@@ -421,7 +421,7 @@ void EnumAllDiskPartitions()
 	for (DiskIndex = 0; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
 		// Skip absent media and partition media.
-		Print(L"MediaPresent :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent);
+		Print(L"LogicalPartition :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
 		if (DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent && !DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition)
 		{
 			CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[DiskIndex]->DevicePath, FALSE, FALSE);
