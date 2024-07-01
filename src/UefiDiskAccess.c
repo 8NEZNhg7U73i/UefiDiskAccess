@@ -198,6 +198,7 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, IN UINTN MbrPartInde
 	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
 		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
+		Print(L"FindMbrBlockDevice: %r\n", STATUS);
 		if (STATUS == EFI_SUCCESS)
 		{
 			while (!IsDevicePathEnd(DiskDevices[DiskIndex]->DevicePath))
