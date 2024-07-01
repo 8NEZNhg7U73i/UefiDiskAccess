@@ -513,7 +513,7 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 		return EFI_DEVICE_ERROR;
 	}
 
-	if (PartitionInfo && DevicePath->SignatureType)
+	if (PartitionInfo && DevicePathMask->SignatureType)
 	{
 		IsDisk = TRUE;
 		return EFI_SUCCESS;
@@ -522,7 +522,7 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	{
 		IsDisk = FALSE;
 	}
-	
+
 	//Extract Device Path Protocol useful data
 	SignatureType = DevicePathMask->SignatureType;
 	PartitionNumber = DevicePathMask->PartitionNumber;
