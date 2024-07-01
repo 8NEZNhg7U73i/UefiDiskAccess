@@ -496,7 +496,7 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 	}
 	//CHAR16 *DevPath;
 
-	if (PartitionInfo && DevicePathMask->SignatureType)
+	if (PartitionInfo && DevicePath->SignatureType)
 	{
 		IsDisk = TRUE;
 		return EFI_SUCCESS;
