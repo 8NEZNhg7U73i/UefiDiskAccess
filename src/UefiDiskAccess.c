@@ -198,7 +198,6 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, IN UINTN MbrPartInde
 	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
 		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
-		Print(L"FindMbrBlockDevice: %r\n", STATUS);
 		if (STATUS == EFI_SUCCESS)
 		{
 			while (!IsDevicePathEnd(DiskDevices[DiskIndex]->DevicePath))
@@ -419,25 +418,10 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 void EnumAllDiskPartitions()
 {
 	UINTN DiskIndex;
-	UINTN BuffCount = 0;
-	EFI_HANDLE *HandleBuffer = NULL;
-	gBS->LocateHandleBuffer(ByProtocol, &gEfiBlockIoProtocolGuid, NULL, &BuffCount, &HandleBuffer);
-	DiskDevices = AllocateZeroPool(sizeof(DISK_DEVICE_OBJECT) * BuffCount);
-	if (DiskDevices)
-	{
-		NumberOfDiskDevices = BuffCount;
-		for (DiskIndex = 0; DiskIndex < BuffCount; DiskIndex++)
-		{
-			DiskDevices[DiskIndex]->DevicePath = DevicePathFromHandle(HandleBuffer[DiskIndex]);
-			gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, &DiskDevices[DiskIndex]->BlockIo);
-			gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);	for (DiskIndex = 0; DiskIndex < NumberOfDiskDevices; DiskIndex++);
-		}
-	}
-
+	for (DiskIndex = 0; DiskIndex < NumberOfDiskDevices; DiskIndex++)
 	{
 		// Skip absent media and partition media.
-		Print(L"MediaPresent: %d\n", DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent);
-		Print(L"LogicalPartition: %d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
+		Print(L"MediaPresent :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent);
 		if (DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent && !DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition)
 		{
 			CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[DiskIndex]->DevicePath, FALSE, FALSE);
@@ -572,13 +556,11 @@ EFI_STATUS DevicePathConvert(IN DISK_DEVICE_OBJECT *DiskDevice)
 
 EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 {
-  /*
-	EFI_DISK_IO_PROTOCOL         *DiskIo;
+  EFI_DISK_IO_PROTOCOL         *DiskIo;
   EFI_DISK_IO2_PROTOCOL        *DiskIo2;
   EFI_BLOCK_IO_PROTOCOL        *BlockIo;
   EFI_BLOCK_IO2_PROTOCOL       *BlockIo2;
   EFI_DEVICE_PATH_PROTOCOL     *DevicePath;
-	*/
 	CHAR16                       *StrPath;
 	UINTN                        DiskIndex;
 
@@ -596,7 +578,6 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 	if (DISKSTATUS == EFI_SUCCESS)
 	{
 		DiskDevices = AllocateZeroPool(sizeof(DISK_DEVICE_OBJECT) * BuffCount);
-		//DiskDevices = * (DISK_DEVICE_OBJECT**)DiskDevices;
 		if (DiskDevices)
 		{
 			NumberOfDiskDevices = BuffCount;
@@ -612,24 +593,17 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				Print(L"Type:%d\n", DiskDevices[DiskIndex]->PartInfo->Type);
 				//Print(L"DiskIoProtocol: %r\n", STATUS);
 				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[DiskIndex], NULL);
-				Print(L"LogicalPartition0 :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
-				/*
 				if (DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent && !DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition)
 				{
 					STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, &BlockIo);
-					//CopyMem(&BlockIo, &DiskDevices[DiskIndex], sizeof(EFI_BLOCK_IO_PROTOCOL));
 					//Print(L"BlockIo: %r\n", STATUS);
 					STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIo2ProtocolGuid, &BlockIo2);
-					//CopyMem(&BlockIo2, &DiskDevices[DiskIndex], sizeof(EFI_BLOCK_IO2_PROTOCOL));
 					//Print(L"BlockIo2: %r\n", STATUS);
 					STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiDiskIoProtocolGuid, &DiskIo);
-					//CopyMem(&DiskIo, &DiskDevices[DiskIndex], sizeof(EFI_DISK_IO_PROTOCOL));
 					//Print(L"DiskIo: %r\n", STATUS);
 					STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiDiskIo2ProtocolGuid, &DiskIo2);
-					//CopyMem(&DiskIo2, &DiskDevices[DiskIndex], sizeof(EFI_DISK_IO2_PROTOCOL));
 					//Print(L"DiskIo2: %r\n", STATUS);
 					DevicePath = DiskDevices[DiskIndex]->DevicePath;
-					//CopyMem(&DevicePath, &DiskDevices[DiskIndex]->DevicePath, sizeof(EFI_DEVICE_PATH_PROTOCOL));
 					Print(L"DiskHandle: %p\n", HandleBuffer[DiskIndex]);
 					//StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 					//Print(L"StrPath: %s\n", StrPath);
@@ -643,8 +617,6 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					//Print(L"PartInfo1: %r\n", STATUS);
 					Print(L"\n");
 				}
-				*/
-				Print(L"LogicalPartition1 :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
 				Print(L"\n");
 				/*
 				if (HandleBuffer[DiskIndex] == CurrentImage->DeviceHandle)
