@@ -596,20 +596,20 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 				Print(L"LogicalPartition :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
 				if (DiskDevices[DiskIndex]->BlockIo->Media->MediaPresent && !DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition)
 				{
-					//STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, &BlockIo);
-					CopyMem(&BlockIo, &DiskDevices[DiskIndex], sizeof(EFI_BLOCK_IO_PROTOCOL));
+					STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIoProtocolGuid, &BlockIo);
+					//CopyMem(&BlockIo, &DiskDevices[DiskIndex], sizeof(EFI_BLOCK_IO_PROTOCOL));
 					//Print(L"BlockIo: %r\n", STATUS);
-					//STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIo2ProtocolGuid, &BlockIo2);
-					CopyMem(&BlockIo2, &DiskDevices[DiskIndex], sizeof(EFI_BLOCK_IO2_PROTOCOL));
+					STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiBlockIo2ProtocolGuid, &BlockIo2);
+					//CopyMem(&BlockIo2, &DiskDevices[DiskIndex], sizeof(EFI_BLOCK_IO2_PROTOCOL));
 					//Print(L"BlockIo2: %r\n", STATUS);
-					//STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiDiskIoProtocolGuid, &DiskIo);
-					CopyMem(&DiskIo, &DiskDevices[DiskIndex], sizeof(EFI_DISK_IO_PROTOCOL));
+					STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiDiskIoProtocolGuid, &DiskIo);
+					//CopyMem(&DiskIo, &DiskDevices[DiskIndex], sizeof(EFI_DISK_IO_PROTOCOL));
 					//Print(L"DiskIo: %r\n", STATUS);
-					//STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiDiskIo2ProtocolGuid, &DiskIo2);
-					CopyMem(&DiskIo2, &DiskDevices[DiskIndex], sizeof(EFI_DISK_IO2_PROTOCOL));
+					STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiDiskIo2ProtocolGuid, &DiskIo2);
+					//CopyMem(&DiskIo2, &DiskDevices[DiskIndex], sizeof(EFI_DISK_IO2_PROTOCOL));
 					//Print(L"DiskIo2: %r\n", STATUS);
-					//DevicePath = DiskDevices[DiskIndex]->DevicePath;
-					CopyMem(&DevicePath, &DiskDevices[DiskIndex]->DevicePath, sizeof(EFI_DEVICE_PATH_PROTOCOL));
+					DevicePath = DiskDevices[DiskIndex]->DevicePath;
+					//CopyMem(&DevicePath, &DiskDevices[DiskIndex]->DevicePath, sizeof(EFI_DEVICE_PATH_PROTOCOL));
 					Print(L"DiskHandle: %p\n", HandleBuffer[DiskIndex]);
 					//StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 					//Print(L"StrPath: %s\n", StrPath);
