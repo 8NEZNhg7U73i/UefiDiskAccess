@@ -189,25 +189,25 @@ void DisplaySize(IN UINT64 Size, OUT CHAR16 *Buffer, IN UINTN Limit)
 		UnicodeSPrint(Buffer, Limit, L"%u GiB", Size >> 30);
 }
 
-EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, IN UINTN MbrPartIndex, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN DiskIndex)
+EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, IN UINTN MbrPartIndex, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN BlockIndex)
 {
 	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
 	EFI_STATUS STATUS;
 	//EFI_LBA StartingLBA;
 	//EFI_LBA	EndingLBA;
-	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
+	for (BlockIndex = 0 ; BlockIndex < NumberOfDiskDevices; BlockIndex++)
 	{
-		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
+		STATUS = CompareMem(&DiskDevices[BlockIndex]->PartInfo->Info.Mbr, Mbr, sizeof(MBR_PARTITION_RECORD));
 		if (STATUS == EFI_SUCCESS)
 		{
-			while (!IsDevicePathEnd(DiskDevices[DiskIndex]->DevicePath))
+			while (!IsDevicePathEnd(DiskDevices[BlockIndex]->DevicePath))
 			{
 				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DevicePath;
 				DevicePath = NextDevicePathNode(DevicePath);
 			}
 			if (DevicePathMask->PartitionNumber == MbrPartIndex)
 			{
-				DevicePath = DiskDevices[DiskIndex]->DevicePath;
+				DevicePath = DiskDevices[BlockIndex]->DevicePath;
 				return EFI_SUCCESS;
 			}
 		}
@@ -215,25 +215,25 @@ EFI_STATUS FindMbrBlockDevice(IN MBR_PARTITION_RECORD *Mbr, IN UINTN MbrPartInde
 	return EFI_DEVICE_ERROR;
 }
 
-EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, IN UINTN GptPartIndex, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN DiskIndex)
+EFI_STATUS FindGptBlockDevice(IN EFI_PARTITION_ENTRY *Gpt, IN UINTN GptPartIndex, OUT EFI_DEVICE_PATH_PROTOCOL *DevicePath, OUT UINTN BlockIndex)
 {
 	CONST HARDDRIVE_DEVICE_PATH *DevicePathMask;
 	EFI_STATUS STATUS;
 	//EFI_LBA StartingLBA;
 	//EFI_LBA EndingLBA;
-	for (DiskIndex = 0 ; DiskIndex < NumberOfDiskDevices; DiskIndex++)
+	for (BlockIndex = 0 ; BlockIndex < NumberOfDiskDevices; BlockIndex++)
 	{
-		STATUS = CompareMem(&DiskDevices[DiskIndex]->PartInfo->Info.Gpt, Gpt, sizeof(EFI_PARTITION_ENTRY));
+		STATUS = CompareMem(&DiskDevices[BlockIndex]->PartInfo->Info.Gpt, Gpt, sizeof(EFI_PARTITION_ENTRY));
 		if (STATUS == EFI_SUCCESS)
 		{
-			while (!IsDevicePathEnd(DiskDevices[DiskIndex]->DevicePath))
+			while (!IsDevicePathEnd(DiskDevices[BlockIndex]->DevicePath))
 			{
 				DevicePathMask = (CONST HARDDRIVE_DEVICE_PATH *)DevicePath;
 				DevicePath = NextDevicePathNode(DevicePath);
 			}
 			if (DevicePathMask->PartitionNumber == GptPartIndex)
 			{
-				DevicePath = DiskDevices[DiskIndex]->DevicePath;
+				DevicePath = DiskDevices[BlockIndex]->DevicePath;
 				return EFI_SUCCESS;
 			}
 		}
@@ -250,7 +250,7 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA My
 	CHAR16 ScaledStart[32], ScaledEnd[32], ScaledSize[32];
 	EFI_DEVICE_PATH_PROTOCOL *DevicePath=NULL;
 	UINTN MbrPartIndex=0;
-	UINTN DiskIndex=0;
+	UINTN BlockIndex=0;
 
 	MyLBA = 0;
 	STATUS = BlockIoProtocol->ReadBlocks(BlockIoProtocol, BlockIoProtocol->Media->MediaId, 0, BlockIoProtocol->Media->BlockSize, MBRContent);
@@ -278,16 +278,16 @@ EFI_STATUS EnumMbrDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, OUT EFI_LBA My
 					DisplaySize(__emulu(StartingLBA, BlockIoProtocol->Media->BlockSize), ScaledStart, sizeof(ScaledStart));
 					DisplaySize(__emulu(EndingLBA, BlockIoProtocol->Media->BlockSize), ScaledEnd, sizeof(ScaledEnd));
 					DisplaySize(__emulu(SizeInLBA, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
-					STATUS = FindMbrBlockDevice(MbrPart, MbrPartIndex, DevicePath, DiskIndex);
+					STATUS = FindMbrBlockDevice(MbrPart, MbrPartIndex, DevicePath, BlockIndex);
 					if (STATUS == EFI_SUCCESS)
 					{
 						if (SizeInLBA == 0xFFFFFFFF)
 						{
-							Print(L"MBR Part %d, Block Device %d : StartLBA: %u EndLBA: %s OS Type: 0x%02X Size: Over 2TiB\n", MbrPartIndex, DiskIndex , StartingLBA, EndingLBA, MbrPart->OSIndicator);
+							Print(L"MBR Part %d, Block Device %d : StartLBA: %u EndLBA: %s OS Type: 0x%02X Size: Over 2TiB\n", MbrPartIndex, BlockIndex , StartingLBA, EndingLBA, MbrPart->OSIndicator);
 						}
 						else
 						{
-							Print(L"MBR Part %d, Block Device %d : StartLBA: %u EndLBA: %u LBASize: %u OS Type: 0x%02X Size: %s\n", MbrPartIndex, DiskIndex, StartingLBA, EndingLBA, SizeInLBA, ScaledSize, MbrPart->OSIndicator);
+							Print(L"MBR Part %d, Block Device %d : StartLBA: %u EndLBA: %u LBASize: %u OS Type: 0x%02X Size: %s\n", MbrPartIndex, BlockIndex, StartingLBA, EndingLBA, SizeInLBA, ScaledSize, MbrPart->OSIndicator);
 						}
 					}
 					else {
@@ -321,7 +321,7 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 	UINT32 PartitionEntrySize;
 	VOID *PartitionEntries;
 	UINTN PartitionIndex=0;
-	UINTN DiskIndex=0;
+	UINTN BlockIndex=0;
 	CHAR16 ScaledStart[32], ScaledEnd[32], ScaledSize[32];
 	EFI_DEVICE_PATH_PROTOCOL *DevicePath=NULL;
 
@@ -352,10 +352,10 @@ EFI_STATUS EnumGptDisk(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol, IN UINTN MyLBA
 							DisplaySize(MultU64x32(PartitionEntry->StartingLBA, BlockIoProtocol->Media->BlockSize), ScaledStart, sizeof(ScaledStart));
 							DisplaySize(MultU64x32(PartitionEntry->EndingLBA, BlockIoProtocol->Media->BlockSize), ScaledEnd, sizeof(ScaledEnd));
 							DisplaySize(MultU64x32(PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, BlockIoProtocol->Media->BlockSize), ScaledSize, sizeof(ScaledSize));
-							STATUS = FindGptBlockDevice(PartitionEntry, PartitionIndex, DevicePath, DiskIndex);
+							STATUS = FindGptBlockDevice(PartitionEntry, PartitionIndex, DevicePath, BlockIndex);
 							if (STATUS == EFI_SUCCESS)
 							{
-								Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", PartitionIndex, DiskIndex, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
+								Print(L"GPT Part %u, Block Device %u : StartLBA: %u EndLBA: %u LBASize: %u Size: %s\n", PartitionIndex, BlockIndex, PartitionEntry->StartingLBA, PartitionEntry->EndingLBA, PartitionEntry->EndingLBA - PartitionEntry->StartingLBA + 1, ScaledSize);
 							}
 							else
 							{
@@ -417,18 +417,19 @@ EFI_STATUS EnumDiskPartitions(IN EFI_BLOCK_IO_PROTOCOL *BlockIoProtocol)
 
 void EnumAllDiskPartitions()
 {
-	UINTN DiskDeviceIndex;
-	for (DiskDeviceIndex = 0; DiskDeviceIndex < NumberOfDiskDevices; DiskDeviceIndex++)
+	UINTN BlockIndex;
+	for (BlockIndex = 0; BlockIndex < NumberOfDiskDevices; BlockIndex++)
 	{
 		// Skip absent media and partition media.
-		if (DiskDevices[DiskDeviceIndex]->BlockIo->Media->MediaPresent && !DiskDevices[DiskDeviceIndex]->BlockIo->Media->LogicalPartition)
+		Print(L"MediaPresent :%d\n", DiskDevices[BlockIndex]->BlockIo->Media->MediaPresent);
+		if (DiskDevices[BlockIndex]->BlockIo->Media->MediaPresent && !DiskDevices[BlockIndex]->BlockIo->Media->LogicalPartition)
 		{
-			CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[DiskDeviceIndex]->DevicePath, FALSE, FALSE);
+			CHAR16 *DiskDevicePath = ConvertDevicePathToText(DiskDevices[BlockIndex]->DevicePath, FALSE, FALSE);
 			Print(L"=============================================================================\r\n");
-			Print(L"Part Info of Block Device %u Path: %s\n", DiskDeviceIndex, DiskDevicePath);
+			Print(L"Part Info of Block Device %u Path: %s\n", BlockIndex, DiskDevicePath);
 			FreePool(DiskDevicePath);
-			Print(L"Disk Last LBA: %u.\n", DiskDevices[DiskDeviceIndex]->BlockIo->Media->LastBlock);
-			EnumDiskPartitions(DiskDevices[DiskDeviceIndex]->BlockIo);
+			Print(L"Disk Last LBA: %u.\n", DiskDevices[BlockIndex]->BlockIo->Media->LastBlock);
+			EnumDiskPartitions(DiskDevices[BlockIndex]->BlockIo);
 		}
 	}
 	Print(L"=============================================================================\r\n");
@@ -561,7 +562,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
   EFI_BLOCK_IO2_PROTOCOL       *BlockIo2;
   EFI_DEVICE_PATH_PROTOCOL     *DevicePath;
 	CHAR16                       *StrPath;
-	UINTN                        DiskDeviceIndex;
+	UINTN                        BlockIndex;
 
 	gBS->HandleProtocol(ImageHandle, &gEfiLoadedImageProtocolGuid, &CurrentImage);
 	//Print(L"%0X\n", CurrentImage);
@@ -580,50 +581,50 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 		if (DiskDevices)
 		{
 			NumberOfDiskDevices = BuffCount;
-			for (DiskDeviceIndex = 0; DiskDeviceIndex < BuffCount; DiskDeviceIndex++)
+			for (BlockIndex = 0; BlockIndex < BuffCount; BlockIndex++)
 			{
-				DiskDevices[DiskDeviceIndex]->DevicePath = DevicePathFromHandle(HandleBuffer[DiskDeviceIndex]);
-				STATUS = gBS->HandleProtocol(HandleBuffer[DiskDeviceIndex], &gEfiBlockIoProtocolGuid, &DiskDevices[DiskDeviceIndex]->BlockIo);
-				STATUS = gBS->HandleProtocol(HandleBuffer[DiskDeviceIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskDeviceIndex]->PartInfo);
-				StrPath = ConvertDevicePathToText(DiskDevices[DiskDeviceIndex]->DevicePath, FALSE, FALSE);
-				Print(L"BlockIo: %d\n", DiskDeviceIndex);
+				DiskDevices[BlockIndex]->DevicePath = DevicePathFromHandle(HandleBuffer[BlockIndex]);
+				STATUS = gBS->HandleProtocol(HandleBuffer[BlockIndex], &gEfiBlockIoProtocolGuid, &DiskDevices[BlockIndex]->BlockIo);
+				STATUS = gBS->HandleProtocol(HandleBuffer[BlockIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[BlockIndex]->PartInfo);
+				StrPath = ConvertDevicePathToText(DiskDevices[BlockIndex]->DevicePath, FALSE, FALSE);
+				Print(L"BlockIo: %d\n", BlockIndex);
 				Print(L"StrPath: %s\n", StrPath);
 				Print(L"gEfiPartitionInfoProtocolGuid:%r\n", STATUS);
-				Print(L"Type:%d\n", DiskDevices[DiskDeviceIndex]->PartInfo->Type);
+				Print(L"Type:%d\n", DiskDevices[BlockIndex]->PartInfo->Type);
 				//Print(L"DiskIoProtocol: %r\n", STATUS);
-				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[DiskDeviceIndex], NULL);
-				if (DiskDevices[DiskDeviceIndex]->BlockIo->Media->MediaPresent && !DiskDevices[DiskDeviceIndex]->BlockIo->Media->LogicalPartition)
+				//STATUS = gPartitionDriverBinding.Supported(&gPartitionDriverBinding, HandleBuffer[BlockIndex], NULL);
+				if (DiskDevices[BlockIndex]->BlockIo->Media->MediaPresent && !DiskDevices[BlockIndex]->BlockIo->Media->LogicalPartition)
 				{
-					STATUS = gBS->HandleProtocol(HandleBuffer[DiskDeviceIndex], &gEfiBlockIoProtocolGuid, &BlockIo);
+					STATUS = gBS->HandleProtocol(HandleBuffer[BlockIndex], &gEfiBlockIoProtocolGuid, &BlockIo);
 					//Print(L"BlockIo: %r\n", STATUS);
-					STATUS = gBS->HandleProtocol(HandleBuffer[DiskDeviceIndex], &gEfiBlockIo2ProtocolGuid, &BlockIo2);
+					STATUS = gBS->HandleProtocol(HandleBuffer[BlockIndex], &gEfiBlockIo2ProtocolGuid, &BlockIo2);
 					//Print(L"BlockIo2: %r\n", STATUS);
-					STATUS = gBS->HandleProtocol(HandleBuffer[DiskDeviceIndex], &gEfiDiskIoProtocolGuid, &DiskIo);
+					STATUS = gBS->HandleProtocol(HandleBuffer[BlockIndex], &gEfiDiskIoProtocolGuid, &DiskIo);
 					//Print(L"DiskIo: %r\n", STATUS);
-					STATUS = gBS->HandleProtocol(HandleBuffer[DiskDeviceIndex], &gEfiDiskIo2ProtocolGuid, &DiskIo2);
+					STATUS = gBS->HandleProtocol(HandleBuffer[BlockIndex], &gEfiDiskIo2ProtocolGuid, &DiskIo2);
 					//Print(L"DiskIo2: %r\n", STATUS);
-					DevicePath = DiskDevices[DiskDeviceIndex]->DevicePath;
-					Print(L"DiskHandle: %p\n", HandleBuffer[DiskDeviceIndex]);
+					DevicePath = DiskDevices[BlockIndex]->DevicePath;
+					Print(L"DiskHandle: %p\n", HandleBuffer[BlockIndex]);
 					//StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 					//Print(L"StrPath: %s\n", StrPath);
-					STATUS = PartitionInstallGptChildHandles (&gPartitionDriverBinding, HandleBuffer[DiskDeviceIndex], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
+					STATUS = PartitionInstallGptChildHandles (&gPartitionDriverBinding, HandleBuffer[BlockIndex], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
 					Print (L"PartitionInstallGptChildHandles: %r\n", STATUS);
-					STATUS = PartitionInstallMbrChildHandles (&gPartitionDriverBinding, HandleBuffer[DiskDeviceIndex], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
+					STATUS = PartitionInstallMbrChildHandles (&gPartitionDriverBinding, HandleBuffer[BlockIndex], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
 					Print (L"PartitionInstallMbrChildHandles: %r\n", STATUS);
 					//if (STATUS == EFI_SUCCESS)
-					//Print(L"Type:%d\n", (DiskDevices[DiskDeviceIndex]->PartInfo)->Type);
-					//STATUS = gBS->HandleProtocol(HandleBuffer[DiskDeviceIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskDeviceIndex]->PartInfo);
+					//Print(L"Type:%d\n", (DiskDevices[BlockIndex]->PartInfo)->Type);
+					//STATUS = gBS->HandleProtocol(HandleBuffer[BlockIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[BlockIndex]->PartInfo);
 					//Print(L"PartInfo1: %r\n", STATUS);
 					Print(L"\n");
 				}
 				Print(L"\n");
 				/*
-				if (HandleBuffer[DiskDeviceIndex] == CurrentImage->DeviceHandle)
+				if (HandleBuffer[BlockIndex] == CurrentImage->DeviceHandle)
 				{
-					CHAR16 *DevPath = ConvertDevicePathToText(DiskDevices[DiskDeviceIndex]->DevicePath, FALSE, FALSE);
+					CHAR16 *DevPath = ConvertDevicePathToText(DiskDevices[BlockIndex]->DevicePath, FALSE, FALSE);
 					if (DevPath)
 					{
-						// CurrentName = gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[DiskDeviceIndex]->DevicePath);
+						// CurrentName = gEfiShellProtocol->GetMapFromDevicePath(&DiskDevices[BlockIndex]->DevicePath);
 						// CHAR16 *MapName = StrnCatGrow(&MapName, 0, CurrentName, 0);
 						// Print(L"Image was loaded from map: %s, Disk Device: %s\r\n", MapName, DevPath);
 						Print(L"Image was loaded from: %s\r\n", DevPath);
