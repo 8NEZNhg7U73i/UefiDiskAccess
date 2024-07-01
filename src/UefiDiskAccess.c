@@ -619,10 +619,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					Print(L"\n");
 				}
 				Print(L"\n");
-				for (DiskIndex = 0; DiskIndex < BuffCount; DiskIndex++)
-				{
-					Print(L"LogicalPartition :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
-				}
+
 				/*
 				if (HandleBuffer[DiskIndex] == CurrentImage->DeviceHandle)
 				{
@@ -638,6 +635,10 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					}
 				}
 				*/
+			}
+			for (DiskIndex = 0; DiskIndex < BuffCount; DiskIndex++)
+			{
+				Print(L"LogicalPartition :%d\n", DiskDevices[DiskIndex]->BlockIo->Media->LogicalPartition);
 			}
 		}
 		else
