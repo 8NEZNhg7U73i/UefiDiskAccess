@@ -613,10 +613,12 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 					Print(L"DiskHandle: %p\n", HandleBuffer[DiskIndex]);
 					//StrPath = ConvertDevicePathToText(DevicePath, FALSE, FALSE);
 					//Print(L"StrPath: %s\n", StrPath);
+					/*
 					STATUS = PartitionInstallGptChildHandles (&gPartitionDriverBinding, HandleBuffer[DiskIndex], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
 					Print (L"PartitionInstallGptChildHandles: %r\n", STATUS);
 					STATUS = PartitionInstallMbrChildHandles (&gPartitionDriverBinding, HandleBuffer[DiskIndex], DiskIo, DiskIo2, BlockIo, BlockIo2, DevicePath);
 					Print (L"PartitionInstallMbrChildHandles: %r\n", STATUS);
+					*/
 					//if (STATUS == EFI_SUCCESS)
 					//Print(L"Type:%d\n", (DiskDevices[DiskIndex]->PartInfo)->Type);
 					//STATUS = gBS->HandleProtocol(HandleBuffer[DiskIndex], &gEfiPartitionInfoProtocolGuid, &DiskDevices[DiskIndex]->PartInfo);
