@@ -653,7 +653,7 @@ EFI_STATUS InitializeDiskIoProtocol(IN EFI_HANDLE ImageHandle)
 			DISKSTATUS = EFI_OUT_OF_RESOURCES;
 			Print(L"Failed to build list of Disk Devices!\r\n");
 		}
-		//FreePool(HandleBuffer);
+		FreePool(HandleBuffer);
 	}
 	else
 	{
